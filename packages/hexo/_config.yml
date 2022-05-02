@@ -108,6 +108,13 @@ sitemap:
   tags: true
   categories: true
 
+## Local Search
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: html
+
 ## Themes: https://hexo.io/themes/
 # theme: landscape
 theme: next
