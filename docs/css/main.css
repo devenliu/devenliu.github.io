@@ -3114,6 +3114,9 @@ mark.search-keyword {
     padding: 10px 12px;
   }
 }
+.sidebar-panel-container {
+  user-select: none;
+}
 .book-mark-link {
   display: none;
 }
