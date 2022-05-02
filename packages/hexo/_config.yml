@@ -15,7 +15,7 @@ timezone: 'Asia/Shanghai'
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: https://devenliu.com
+url: https://www.devenliu.com
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
@@ -52,6 +52,8 @@ highlight:
   tab_replace: ''
   wrap: true
   hljs: false
+  exclude_languages:
+    - mermaid
 prismjs:
   enable: false
   preprocess: true
@@ -114,6 +116,14 @@ search:
   field: post
   content: true
   format: html
+
+symbols_count_time:
+  symbols: true
+  time: true
+  total_symbols: true
+  total_time: true
+  awl: 4
+  wpm: 275
 
 ## Themes: https://hexo.io/themes/
 # theme: landscape

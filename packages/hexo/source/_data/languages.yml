@@ -4,6 +4,7 @@ zh-CN:
     archive: 归档
     category: 分类
     tag: 标签
+    about: 关于
     schedule: 日程表
   menu:
     home: 首页
@@ -96,12 +97,17 @@ zh-CN:
     time_total: 站点阅读时长
     time_minutes: 分钟
 
+  welcome:
+    title: 欢迎
+
 en:
   title:
     archive: Archive
     category: Category
     tag: Tag
+    about: About
     schedule: Schedule
+    guestbook: Guestbook
 
   menu:
     home: Home
@@ -113,6 +119,7 @@ en:
     schedule: Schedule
     sitemap: Sitemap
     commonweal: Commonweal 404
+    guestbook: Guestbook
 
   sidebar:
     overview: Overview
