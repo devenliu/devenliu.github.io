@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://devenliu.com/tags/index.html</loc>
+    <loc>https://www.devenliu.com/about/index.html</loc>
     
     <lastmod>2022-05-02</lastmod>
     
@@ -11,36 +11,36 @@
   </url>
   
   <url>
-    <loc>https://devenliu.com/2022/05/01/hello-world/</loc>
+    <loc>https://www.devenliu.com/2022/05/01/zh-CN/welcome/</loc>
     
-    <lastmod>2022-05-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://devenliu.com/404/index.html</loc>
-    
-    <lastmod>2022-05-01</lastmod>
+    <lastmod>2022-05-02</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://devenliu.com/categories/index.html</loc>
+    <loc>https://www.devenliu.com/404/index.html</loc>
     
-    <lastmod>2022-05-01</lastmod>
+    <lastmod>2022-05-02</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://devenliu.com/about/index.html</loc>
+    <loc>https://www.devenliu.com/tags/index.html</loc>
     
-    <lastmod>2022-05-01</lastmod>
+    <lastmod>2022-05-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.devenliu.com/categories/index.html</loc>
+    
+    <lastmod>2022-05-02</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -48,27 +48,13 @@
   
 
   <url>
-    <loc>https://devenliu.com/</loc>
+    <loc>https://www.devenliu.com/</loc>
     <lastmod>2022-05-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   
-  <url>
-    <loc>https://devenliu.com/tags/hello-world/</loc>
-    <lastmod>2022-05-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
 
-  
-  <url>
-    <loc>https://devenliu.com/categories/hello-world/</loc>
-    <lastmod>2022-05-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
   
 </urlset>
