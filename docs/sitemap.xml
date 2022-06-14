@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.devenliu.com/2022/06/14/zh-CN/dotNET-Interview-Questions-and-Answers/</loc>
+    
+    <lastmod>2022-06-14</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.devenliu.com/about/index.html</loc>
     
     <lastmod>2022-05-02</lastmod>
@@ -49,12 +58,40 @@
 
   <url>
     <loc>https://www.devenliu.com/</loc>
-    <lastmod>2022-05-02</lastmod>
+    <lastmod>2022-06-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   
+  <url>
+    <loc>https://www.devenliu.com/tags/C/</loc>
+    <lastmod>2022-06-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.devenliu.com/tags/NET/</loc>
+    <lastmod>2022-06-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.devenliu.com/tags/ASP-NET/</loc>
+    <lastmod>2022-06-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
+  
+  <url>
+    <loc>https://www.devenliu.com/categories/NET/</loc>
+    <lastmod>2022-06-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
   
 </urlset>
