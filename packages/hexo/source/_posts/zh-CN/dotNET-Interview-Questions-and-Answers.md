@@ -8,6 +8,7 @@ tags:
 - .NET
 - ASP.NET
 ---
+<!-- more -->
 
 # 一、初级问题
 
