@@ -9,12 +9,11 @@
   <entry>
     <title>.NET 面试问答 | ASP.NET 面试问答</title>
     <url>/2022/06/14/zh-CN/dotNET-Interview-Questions-and-Answers/</url>
-    <content><![CDATA[<span id="more"></span>
+    <content><![CDATA[<p>整理的关于 .NET Framework 和 ASP.NET 的一些面试问答。</p>
+<span id="more"></span>
 
-<h1 id="一、初级问题"><a href="#一、初级问题" class="headerlink" title="一、初级问题"></a>一、初级问题</h1><h2 id="01-什么是-NET？"><a href="#01-什么是-NET？" class="headerlink" title="01) 什么是 .NET？"></a>01) 什么是 .NET？</h2><p>.NET Framework：</p>
-<p>.NET Core：</p>
-<p>.NET：</p>
-<h2 id="02-NET-有哪些不同的组件？"><a href="#02-NET-有哪些不同的组件？" class="headerlink" title="02) .NET 有哪些不同的组件？"></a>02) .NET 有哪些不同的组件？</h2><ul>
+<h1 id="一、初级问题"><a href="#一、初级问题" class="headerlink" title="一、初级问题"></a>一、初级问题</h1><h2 id="01-什么是-NET-Framework？"><a href="#01-什么是-NET-Framework？" class="headerlink" title="01) 什么是 .NET Framework？"></a>01) 什么是 .NET Framework？</h2><p>.NET Framework 支持用于在 Windows 上构建应用程序的面向对象的方法。<br>它支持各种语言，如 C#、VB、Cobol、Perl、.NET 等。<br>它具有多种工具和功能，如用于构建、部署和运行 Web 服务和不同应用程序的类、库和 API。</p>
+<h2 id="02-NET-Framework-有哪些不同的组件？"><a href="#02-NET-Framework-有哪些不同的组件？" class="headerlink" title="02) .NET Framework 有哪些不同的组件？"></a>02) .NET Framework 有哪些不同的组件？</h2><ul>
 <li>Common Language Runtime</li>
 <li>Application Domain （.NET Framework only）</li>
 <li>Common Type System</li>
@@ -26,7 +25,7 @@
 <h2 id="04-什么是-CLR？"><a href="#04-什么是-CLR？" class="headerlink" title="04) 什么是 CLR？"></a>04) 什么是 CLR？</h2><p>CLR 代表 Common Language Runtime它是 .NET Framework 的重要组成部分。<br>我们可以将 CLR 用作各种应用程序的构建块，并为应用程序提供安全的执行环境。<br>每当编译用 C# 编写的应用程序时，代码都会转换为中间语言。 在此之后，代码以 CLR 为目标，然后执行多项操作，如内存管理、安全检查、加载程序集和线程管理。</p>
 <h2 id="05-解释一下-CLS"><a href="#05-解释一下-CLS" class="headerlink" title="05) 解释一下 CLS"></a>05) 解释一下 CLS</h2><p>CLS 代表通用语言规范（Common Language Specification）。<br>它帮助开发人员使用与 CLS 附带的某些规则的跨语言兼容的组件。<br>然后，它有助于在其他 .NET 兼容语言中重用代码。</p>
 <h2 id="06-你对-JIT-了解多少？"><a href="#06-你对-JIT-了解多少？" class="headerlink" title="06) 你对 JIT 了解多少？"></a>06) 你对 JIT 了解多少？</h2><p>JIT 是一个编译器，代表 Just In Time。<br>它用于将中间代码转换为本地语言。<br>在执行期间，中间代码被转换为本地语言。</p>
-<h2 id="07-为什么要使用Response-Output-Write"><a href="#07-为什么要使用Response-Output-Write" class="headerlink" title="07) 为什么要使用Response.Output.Write()?"></a>07) 为什么要使用Response.Output.Write()?</h2><p>Response.Output.Write() 用于获取格式化输出。</p>
+<h2 id="07-为什么要使用-Response-Output-Write"><a href="#07-为什么要使用-Response-Output-Write" class="headerlink" title="07) 为什么要使用 Response.Output.Write()?"></a>07) 为什么要使用 Response.Output.Write()?</h2><p>Response.Output.Write() 用于获取格式化输出。</p>
 <h2 id="08-Response-Redirect-和-Server-Transfer-有什么区别？"><a href="#08-Response-Redirect-和-Server-Transfer-有什么区别？" class="headerlink" title="08) Response.Redirect 和 Server.Transfer 有什么区别？"></a>08) Response.Redirect 和 Server.Transfer 有什么区别？</h2><p>Response.Redirect：<br>Response.Redirect 基本上是将用户的浏览器重定向到另一个页面或站点。<br>用户浏览器的历史记录也会更新以反映新地址。<br>它还执行返回客户端的行程，客户端的浏览器被重定向到新页面。</p>
 <p>Server.Transfer：<br>然而，Server.Transfer 从一个页面传输到另一个页面，而不需要返回客户端的浏览器。<br>在 Server.Transfer 的情况下，历史记录不会更新。</p>
 <h2 id="09-托管代码和非托管代码的区别？"><a href="#09-托管代码和非托管代码的区别？" class="headerlink" title="09) 托管代码和非托管代码的区别？"></a>09) 托管代码和非托管代码的区别？</h2><p>托管代码（Managed code）：</p>
@@ -199,7 +198,7 @@
 <li>可以从存储过程中调用函数</li>
 </ul>
 <h2 id="列出-ASP-NET-页面的生命周期事件。"><a href="#列出-ASP-NET-页面的生命周期事件。" class="headerlink" title="列出 ASP.NET 页面的生命周期事件。"></a>列出 ASP.NET 页面的生命周期事件。</h2><p>Page_PreInit<br>Page_Init<br>Page_InitComplete<br>Page_PreLoad<br>Page_Load<br>Page_LoadComplete<br>Page_PreRender<br>Render</p>
-<h2 id="38-从-ASP-NET-应用程序发送电子邮件的代码是什么？"><a href="#38-从-ASP-NET-应用程序发送电子邮件的代码是什么？" class="headerlink" title="38) 从 ASP.NET 应用程序发送电子邮件的代码是什么？"></a>38) 从 ASP.NET 应用程序发送电子邮件的代码是什么？</h2><p>Mail msg &#x3D; new Mail();<br>msg.From &#x3D; “<a href="mailto:&#x61;&#x62;&#99;&#x40;&#103;&#x6d;&#97;&#105;&#x6c;&#x2e;&#99;&#x6f;&#x6d;">&#x61;&#x62;&#99;&#x40;&#103;&#x6d;&#97;&#105;&#x6c;&#x2e;&#99;&#x6f;&#x6d;</a>“;<br>msg.To &#x3D; “<a href="mailto:&#x78;&#x79;&#122;&#64;&#103;&#109;&#x61;&#105;&#108;&#x2e;&#99;&#111;&#109;">&#x78;&#x79;&#122;&#64;&#103;&#109;&#x61;&#105;&#108;&#x2e;&#99;&#111;&#109;</a>“;<br>msg.Subject &#x3D; “test”;<br>msg.Body &#x3D; “hello”;</p>
+<h2 id="38-从-ASP-NET-应用程序发送电子邮件的代码是什么？"><a href="#38-从-ASP-NET-应用程序发送电子邮件的代码是什么？" class="headerlink" title="38) 从 ASP.NET 应用程序发送电子邮件的代码是什么？"></a>38) 从 ASP.NET 应用程序发送电子邮件的代码是什么？</h2><p>Mail msg &#x3D; new Mail();<br>msg.From &#x3D; “<a href="mailto:&#x61;&#x62;&#x63;&#x40;&#103;&#109;&#x61;&#105;&#x6c;&#46;&#x63;&#111;&#109;">&#x61;&#x62;&#x63;&#x40;&#103;&#109;&#x61;&#105;&#x6c;&#46;&#x63;&#111;&#109;</a>“;<br>msg.To &#x3D; “<a href="mailto:&#120;&#121;&#x7a;&#x40;&#103;&#109;&#97;&#105;&#108;&#x2e;&#x63;&#x6f;&#109;">&#120;&#121;&#x7a;&#x40;&#103;&#109;&#97;&#105;&#108;&#x2e;&#x63;&#x6f;&#109;</a>“;<br>msg.Subject &#x3D; “test”;<br>msg.Body &#x3D; “hello”;</p>
 <p>SmtpMail.SmtpServer &#x3D; “localhost”;<br>SmtpMail.Send(msg);</p>
 <p>以上代码无法运行，属于伪代码</p>
 <h2 id="39-ASP-NET-中-Global-asax-文件有哪些事件处理程序？"><a href="#39-ASP-NET-中-Global-asax-文件有哪些事件处理程序？" class="headerlink" title="39) ASP.NET 中 Global.asax 文件有哪些事件处理程序？"></a>39) ASP.NET 中 Global.asax 文件有哪些事件处理程序？</h2><p>Application_Start<br>Application_End<br>Application_AuthenticatedRequest<br>Application_AuthorizeRequest<br>Application_BeginRequest<br>Application_Disposed<br>Application_EndRequest<br>Application_Error<br>Application_PostRequestHandlerExecute<br>Application_PreRequestHandlerExecute<br>Application_PreSendRequestContent<br>Application_PreSendRequestHeader<br>Application_ReleaseRequestState<br>Application_ResolveRequestCache<br>Application_UpdateRequestCache</p>

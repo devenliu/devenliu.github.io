@@ -8,19 +8,18 @@ tags:
 - .NET
 - ASP.NET
 ---
+整理的关于 .NET Framework 和 ASP.NET 的一些面试问答。
 <!-- more -->
 
 # 一、初级问题
 
-## 01) 什么是 .NET？
+## 01) 什么是 .NET Framework？
 
-.NET Framework：
+.NET Framework 支持用于在 Windows 上构建应用程序的面向对象的方法。 
+它支持各种语言，如 C#、VB、Cobol、Perl、.NET 等。
+它具有多种工具和功能，如用于构建、部署和运行 Web 服务和不同应用程序的类、库和 API。
 
-.NET Core：
-
-.NET：
-
-## 02) .NET 有哪些不同的组件？
+## 02) .NET Framework 有哪些不同的组件？
 
 - Common Language Runtime
 - Application Domain （.NET Framework only）
@@ -54,7 +53,7 @@ JIT 是一个编译器，代表 Just In Time。
 它用于将中间代码转换为本地语言。
 在执行期间，中间代码被转换为本地语言。
 
-## 07) 为什么要使用Response.Output.Write()?
+## 07) 为什么要使用 Response.Output.Write()?
 
 Response.Output.Write() 用于获取格式化输出。
 
