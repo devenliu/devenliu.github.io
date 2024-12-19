@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>欢迎</title>
+    <url>/blog/zh-CN/welcome/</url>
+    <content><![CDATA[<p><img src="https://tu.ltyuanfang.cn/api/fengjing.php"></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>OrchardCore CustomSettings</title>
+    <url>/blog/zh-CN/OrchardCore-CustomSettings/</url>
+    <content><![CDATA[<p>CustomSettings （自定义设置）允许网站管理员创建一组针对网站全局的自定义属性。<br>这些设置在标准设置部分中进行编辑，可以使用特定权限进行保护。</p>
+<span id="more"></span>
+
+<h2 id="CustomSettings-是什么？"><a href="#CustomSettings-是什么？" class="headerlink" title="CustomSettings 是什么？"></a>CustomSettings 是什么？</h2><p>CustomSettings 是一个数据对象，存储于 ISite 全局对象中。</p>
+<h2 id="如何创建？"><a href="#如何创建？" class="headerlink" title="如何创建？"></a>如何创建？</h2><p>有两种方式可以创建 CustomSettings。</p>
+<ul>
+<li><a href="#%E4%BB%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E5%BC%8F%E5%88%9B%E5%BB%BA">以编程方式创建</a></li>
+<li><a href="#%E5%9C%A8-Admin-%E4%B8%AD%E5%88%9B%E5%BB%BA">在 Admin 中创建</a></li>
+</ul>
+<h2 id="以编程方式创建"><a href="#以编程方式创建" class="headerlink" title="以编程方式创建"></a>以编程方式创建</h2><p>首先需要创建一个 class，包含一些公共属性，如下：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MySettings</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Prop1 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125; = <span class="built_in">string</span>.Empty;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span>? Prop2 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Prop3 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> Prop4 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>其次由于我们的自定义设置是需要支持在 Admin 中进行修改的，因此我们还需要创建 ViewModel 和 编辑视图。</p>
+<p>ViewModel 示例：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MySettingsViewModel</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Prop1 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125; = <span class="built_in">string</span>.Empty;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span>? Prop2 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Prop3 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> Prop4 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编辑视图是一个 Shape，因此需要根据 Template 规则来命名；</p>
+<p>因为这里我们的模板命名为“MySettings_Edit”，所以视图文件应该命名为“MySettings.Edit.cshtml”；</p>
+<p>编辑视图的内容只是一个 Bootstrap 表单，示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@model MySettingsViewModel</span><br><span class="line"></span><br><span class="line">&lt;p class=&quot;alert alert-warning&quot;&gt;</span><br><span class="line">    @T[&quot;The current tenant will be reloaded when the settings are saved.&quot;]</span><br><span class="line">&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">&lt;h3&gt;@T[&quot;My Settings&quot;]&lt;/h3&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;mb-3 row&quot; asp-validation-class-for=&quot;Prop1&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;col-large&quot;&gt;</span><br><span class="line">        &lt;label asp-for=&quot;Prop1&quot;&gt;@T[&quot;Prop1&quot;]&lt;/label&gt;</span><br><span class="line">        &lt;input asp-for=&quot;Prop1&quot; class=&quot;form-control&quot; autocomplete=&quot;off&quot; /&gt;</span><br><span class="line">        &lt;span asp-validation-for=&quot;Prop1&quot;&gt;&lt;/span&gt;</span><br><span class="line">        &lt;span class=&quot;hint&quot;&gt;@T[&quot;Prop1 hint&quot;]&lt;/span&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;mb-3 row&quot; asp-validation-class-for=&quot;Prop2&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;col-large&quot;&gt;</span><br><span class="line">        &lt;label asp-for=&quot;Prop2&quot;&gt;@T[&quot;Prop2&quot;]&lt;/label&gt;</span><br><span class="line">        &lt;input asp-for=&quot;Prop2&quot; class=&quot;form-control&quot; autocomplete=&quot;off&quot; /&gt;</span><br><span class="line">        &lt;span asp-validation-for=&quot;Prop2&quot;&gt;&lt;/span&gt;</span><br><span class="line">        &lt;span class=&quot;hint&quot;&gt;@T[&quot;Prop2 hint&quot;]&lt;/span&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;mb-3 row&quot; asp-validation-class-for=&quot;Prop3&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;col-large&quot;&gt;</span><br><span class="line">        &lt;label asp-for=&quot;Prop3&quot;&gt;@T[&quot;Prop3&quot;]&lt;/label&gt;</span><br><span class="line">        &lt;input asp-for=&quot;Prop3&quot; type=&quot;number&quot; class=&quot;form-control&quot; autocomplete=&quot;off&quot; /&gt;</span><br><span class="line">        &lt;span asp-validation-for=&quot;Prop3&quot;&gt;&lt;/span&gt;</span><br><span class="line">        &lt;span class=&quot;hint&quot;&gt;@T[&quot;Prop3 hint&quot;]&lt;/span&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;mb-3&quot; asp-validation-class-for=&quot;Prop4&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;form-check&quot;&gt;</span><br><span class="line">        &lt;input type=&quot;checkbox&quot; class=&quot;form-check-input&quot; asp-for=&quot;Prop4&quot;&gt;</span><br><span class="line">        &lt;label class=&quot;form-check-label&quot; asp-for=&quot;Prop4&quot;&gt;@T[&quot;Prop4&quot;]&lt;/label&gt;</span><br><span class="line">        &lt;span class=&quot;hint dashed&quot;&gt;@T[&quot;Prop4 hint&quot;]&lt;/span&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们需要实现一个 <code>IDisplayDriver&lt;ISite&gt;</code>，这里我们选择继承自 <code>SectionDisplayDriver&lt;ISite, MySettings&gt;</code>：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MySettingsDisplayDriver</span>: <span class="title">SectionDisplayDriver</span>&lt;<span class="title">ISite</span>, <span class="title">MySettings</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> IShellHost _shellHost;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ShellSettings _shellSettings;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MySettingsDisplayDriver</span>(<span class="params">IShellHost shellHost, ShellSettings shellSettings</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        _shellHost = shellHost;</span><br><span class="line">        _shellSettings = shellSettings;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">async</span> <span class="title">Task</span>&lt;<span class="title">IDisplayResult</span>&gt; <span class="title">EditAsync</span>(<span class="params">MySettings settings, BuildEditorContext context</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">await</span> Task.Yield();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第一个参数指定了编辑视图的 Shape 模板，</span></span><br><span class="line">        <span class="comment">// 对应 Views/MySettings.Edit.cshtml </span></span><br><span class="line">        <span class="comment">// 或者 Views/MySettings.Edit.liquid</span></span><br><span class="line">        <span class="keyword">return</span> Initialize&lt;MySettingsViewModel&gt;(<span class="string">&quot;MySettings_Edit&quot;</span>, model =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 初始化视图模型</span></span><br><span class="line">            model.Prop1 = settings.Prop1;</span><br><span class="line">            model.Prop2 = settings.Prop2;</span><br><span class="line">            model.Prop3 = settings.Prop3;</span><br><span class="line">            model.Prop4 = settings.Prop4;</span><br><span class="line">        &#125;)</span><br><span class="line">            <span class="comment">// 定义这个自定义设置在表单中的位置（顺序），因为其他模块可能会对这个自定义设置进行扩展</span></span><br><span class="line">            .Location(<span class="string">&quot;Content:1&quot;</span>)</span><br><span class="line">            <span class="comment">// 定义这个自定义设置的分组</span></span><br><span class="line">            .OnGroup(<span class="string">&quot;MySettingsGroup&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">async</span> Task&lt;IDisplayResult&gt; <span class="title">UpdateAsync</span>(<span class="params">MySettings settings, BuildEditorContext context</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (context.GroupId == <span class="string">&quot;MySettingsGroup&quot;</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> model = <span class="keyword">new</span> MySettingsViewModel();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 从提交的编辑表单中读取视图模型的值</span></span><br><span class="line">            <span class="keyword">await</span> context.Updater.TryUpdateModelAsync(model, Prefix);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (context.Updater.ModelState.IsValid)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 如果模型验证通过</span></span><br><span class="line">                <span class="comment">// 则将视图模型的值，保存到自定义设置中。</span></span><br><span class="line">                settings.Host = model.Host;</span><br><span class="line">                settings.ContentType = model.ContentType;</span><br><span class="line">                settings.Account = model.Account;</span><br><span class="line">                settings.Key = model.Key;</span><br><span class="line">                settings.KeyEncrypted = model.KeyEncrypted;</span><br><span class="line">                settings.CheckIp = model.CheckIp;</span><br><span class="line">                settings.AgencyId = model.AgencyId;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 重新加载租户配置</span></span><br><span class="line">                <span class="keyword">await</span> _shellHost.ReleaseShellContextAsync(_shellSettings);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">await</span> EditAsync(settings, context);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>注入服务集合</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Startup</span> : <span class="title">StartupBase</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 注入服务</span></span><br><span class="line">        services.AddScoped&lt;IDisplayDriver&lt;ISite&gt;, MySettingsDisplayDriver&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 最后还需要为自定义设置配置一个 Admin 菜单，这样才能在 Admin 中进行编辑。</span></span><br><span class="line">        services.AddScoped&lt;INavigationProvider, AdminMenu&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Configure</span>(<span class="params">IApplicationBuilder builder, IEndpointRouteBuilder routes, IServiceProvider serviceProvider</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加管理菜单</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">AdminMenu</span> : <span class="title">INavigationProvider</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> IStringLocalizer S &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AdminMenu</span>(<span class="params">IStringLocalizer&lt;AdminMenu&gt; localizer</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        S = localizer;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">BuildNavigationAsync</span>(<span class="params"><span class="built_in">string</span> name, NavigationBuilder builder</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">string</span>.Equals(name, <span class="string">&quot;admin&quot;</span>, StringComparison.OrdinalIgnoreCase))</span><br><span class="line">        &#123;</span><br><span class="line">            builder.Add(S[<span class="string">&quot;Configuration&quot;</span>], configuration =&gt; configuration</span><br><span class="line">                    .Add(S[<span class="string">&quot;MySettings&quot;</span>], S[<span class="string">&quot;MySettings&quot;</span>].PrefixPosition(), settings =&gt; settings</span><br><span class="line">                        .Action(<span class="string">&quot;Index&quot;</span>, <span class="string">&quot;Admin&quot;</span>, <span class="keyword">new</span> &#123; area = <span class="string">&quot;OrchardCore.Settings&quot;</span>, groupId = <span class="string">&quot;MySettingsGroup&quot;</span> &#125;)</span><br><span class="line">                        .LocalNav())</span><br><span class="line">                ));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Task.CompletedTask;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="在-Admin-中创建"><a href="#在-Admin-中创建" class="headerlink" title="在 Admin 中创建"></a>在 Admin 中创建</h2><p>相比编程方式创建 CustomSettings，此方法会简单很多。</p>
+<p>具体如下：</p>
+<ol>
+<li>创建一个内容类型 MySettings</li>
+<li>将 Stereotype（构造型）设置为 CustomSettings</li>
+<li>添加需要的字段</li>
+<li>保存即可</li>
+</ol>
+<p>此方法是将 CustomSettings 当作 ContentItem（内容项）进行存储，<br>因此在 GraphiQL 的 ContentItems 查询中能看到 MySettings。</p>
+]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>.NET</tag>
+        <tag>C#</tag>
+        <tag>ASP.NET Core</tag>
+        <tag>Orchard Core</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>.NET 面试问答 | ASP.NET 面试问答</title>
+    <url>/blog/zh-CN/dotNET-Interview-Questions-and-Answers/</url>
+    <content><![CDATA[<p>整理的关于 .NET Framework 和 ASP.NET 的一些面试问答。</p>
+<span id="more"></span>
+
+<h1 id="一、初级问题"><a href="#一、初级问题" class="headerlink" title="一、初级问题"></a>一、初级问题</h1><h2 id="01-什么是-NET-Framework？"><a href="#01-什么是-NET-Framework？" class="headerlink" title="01) 什么是 .NET Framework？"></a>01) 什么是 .NET Framework？</h2><p>.NET Framework 支持用于在 Windows 上构建应用程序的面向对象的方法。<br>它支持各种语言，如 C#、VB、Cobol、Perl、.NET 等。<br>它具有多种工具和功能，如用于构建、部署和运行 Web 服务和不同应用程序的类、库和 API。</p>
+<h2 id="02-NET-Framework-有哪些不同的组件？"><a href="#02-NET-Framework-有哪些不同的组件？" class="headerlink" title="02) .NET Framework 有哪些不同的组件？"></a>02) .NET Framework 有哪些不同的组件？</h2><ul>
+<li>Common Language Runtime</li>
+<li>Application Domain （.NET Framework only）</li>
+<li>Common Type System</li>
+<li>.NET Class Library</li>
+<li>.NET Framework &#x2F; .NET Core</li>
+<li>Profiling</li>
+</ul>
+<h2 id="03-你对-CTS-了解多少？"><a href="#03-你对-CTS-了解多少？" class="headerlink" title="03) 你对 CTS 了解多少？"></a>03) 你对 CTS 了解多少？</h2><p>CTS代表通用类型系统（Common Type System）。<br>它遵循一定的规则，数据类型应该根据这些规则在程序代码中声明和使用。<br>CTS还描述了将在应用程序中使用的数据类型。<br>我们甚至可以按照CTS中的规则创建自己的类和函数，它有助于调用其他编程语言在一种编程语言中声明的数据类型。</p>
+<h2 id="04-什么是-CLR？"><a href="#04-什么是-CLR？" class="headerlink" title="04) 什么是 CLR？"></a>04) 什么是 CLR？</h2><p>CLR 代表 Common Language Runtime它是 .NET Framework 的重要组成部分。<br>我们可以将 CLR 用作各种应用程序的构建块，并为应用程序提供安全的执行环境。<br>每当编译用 C# 编写的应用程序时，代码都会转换为中间语言。 在此之后，代码以 CLR 为目标，然后执行多项操作，如内存管理、安全检查、加载程序集和线程管理。</p>
+<h2 id="05-解释一下-CLS"><a href="#05-解释一下-CLS" class="headerlink" title="05) 解释一下 CLS"></a>05) 解释一下 CLS</h2><p>CLS 代表通用语言规范（Common Language Specification）。<br>它帮助开发人员使用与 CLS 附带的某些规则的跨语言兼容的组件。<br>然后，它有助于在其他 .NET 兼容语言中重用代码。</p>
+<h2 id="06-你对-JIT-了解多少？"><a href="#06-你对-JIT-了解多少？" class="headerlink" title="06) 你对 JIT 了解多少？"></a>06) 你对 JIT 了解多少？</h2><p>JIT 是一个编译器，代表 Just In Time。<br>它用于将中间代码转换为本地语言。<br>在执行期间，中间代码被转换为本地语言。</p>
+<h2 id="07-为什么要使用-Response-Output-Write"><a href="#07-为什么要使用-Response-Output-Write" class="headerlink" title="07) 为什么要使用 Response.Output.Write()?"></a>07) 为什么要使用 Response.Output.Write()?</h2><p>Response.Output.Write() 用于获取格式化输出。</p>
+<h2 id="08-Response-Redirect-和-Server-Transfer-有什么区别？"><a href="#08-Response-Redirect-和-Server-Transfer-有什么区别？" class="headerlink" title="08) Response.Redirect 和 Server.Transfer 有什么区别？"></a>08) Response.Redirect 和 Server.Transfer 有什么区别？</h2><p>Response.Redirect：<br>Response.Redirect 基本上是将用户的浏览器重定向到另一个页面或站点。<br>用户浏览器的历史记录也会更新以反映新地址。<br>它还执行返回客户端的行程，客户端的浏览器被重定向到新页面。</p>
+<p>Server.Transfer：<br>然而，Server.Transfer 从一个页面传输到另一个页面，而不需要返回客户端的浏览器。<br>在 Server.Transfer 的情况下，历史记录不会更新。</p>
+<h2 id="09-托管代码和非托管代码的区别？"><a href="#09-托管代码和非托管代码的区别？" class="headerlink" title="09) 托管代码和非托管代码的区别？"></a>09) 托管代码和非托管代码的区别？</h2><p>托管代码（Managed code）：</p>
+<ul>
+<li>托管代码由 CLR 管理</li>
+<li>.NET Framework 是执行托管代码所必需的</li>
+<li>CLR 通过垃圾回收（Garbage Collection）管理内存管理</li>
+</ul>
+<p>非托管代码（Unmanaged code）：</p>
+<ul>
+<li>任何不受 CLR 管理的代码</li>
+<li>独立于 .NET Framework</li>
+<li>拥有用于执行和编译的运行时环境</li>
+</ul>
+<h2 id="10-类和对象的区别？"><a href="#10-类和对象的区别？" class="headerlink" title="10) 类和对象的区别？"></a>10) 类和对象的区别？</h2><p>类（Class）：</p>
+<ul>
+<li>类是对象的定义</li>
+<li>是对象的模板</li>
+<li>描述了所有的方法，属性等</li>
+</ul>
+<p>对象（Object）：</p>
+<ul>
+<li>对象是类的实例</li>
+<li>除非实例化，否则类不会成为对象</li>
+<li>对象访问类的所有属性</li>
+</ul>
+<h2 id="11-你对装箱和拆箱了解多少？"><a href="#11-你对装箱和拆箱了解多少？" class="headerlink" title="11) 你对装箱和拆箱了解多少？"></a>11) 你对装箱和拆箱了解多少？</h2><p>装箱（Boxing）：</p>
+<ul>
+<li>隐式的</li>
+<li>将值类型转换为类型对象的过程</li>
+<li>例如 - object myObj &#x3D; a ;</li>
+</ul>
+<p>拆箱（Unboxing）：</p>
+<ul>
+<li>明确的</li>
+<li>从对象中提取值类型的过程</li>
+<li>例如 - int a &#x3D; (int) myObj ;</li>
+</ul>
+<h2 id="12-常量和只读变量的区别？"><a href="#12-常量和只读变量的区别？" class="headerlink" title="12) 常量和只读变量的区别？"></a>12) 常量和只读变量的区别？</h2><p>常量（const）：</p>
+<ul>
+<li>在编译时评估</li>
+<li>仅支持值类型变量</li>
+<li>在编译时值不变时使用</li>
+<li>不能在构造函数或声明中初始化</li>
+</ul>
+<p>只读变量（readonly）：</p>
+<ul>
+<li>在运行时评估</li>
+<li>可以保存引用类型变量</li>
+<li>在运行时之前实际值未知时使用</li>
+<li>能在构造函数或声明中初始化</li>
+</ul>
+<h2 id="13-什么是-BCL？"><a href="#13-什么是-BCL？" class="headerlink" title="13) 什么是 BCL？"></a>13) 什么是 BCL？</h2><ul>
+<li>BCL（Base Class Library），是类、接口和值类型的基类库。</li>
+<li>它是 .NET Framework 应用程序、组件和控件的基础</li>
+<li>封装了大量常用功能，方便开发人员使用</li>
+<li>它提供线程、输入&#x2F;输出、安全、诊断、资源、全球化等功能</li>
+<li>还用于用户和运行时之间的交互目的</li>
+<li>它还提供了经常使用的命名空间。 例如：System，System.Activities 等。</li>
+</ul>
+<h2 id="14-NET-有哪些不同版本？"><a href="#14-NET-有哪些不同版本？" class="headerlink" title="14) .NET 有哪些不同版本？"></a>14) .NET 有哪些不同版本？</h2><ul>
+<li>.NET Framework 1.0 &#x2F; 1.1</li>
+<li>.NET Framework 2.0</li>
+<li>.NET Framework 3.0 &#x2F; 3.5</li>
+<li>.NET Framework 4.0 &#x2F; 4.5 &#x2F; 4.6 &#x2F; 4.7 &#x2F; 4.8</li>
+<li>.NET Core 1.0 &#x2F; 1.1</li>
+<li>.NET Core 2.0 &#x2F; 2.1</li>
+<li>.NET Core 3.0 &#x2F; 3.1</li>
+<li>.NET 5</li>
+<li>.NET 6</li>
+</ul>
+<h2 id="15-命名空间和程序集有什么区别？"><a href="#15-命名空间和程序集有什么区别？" class="headerlink" title="15) 命名空间和程序集有什么区别？"></a>15) 命名空间和程序集有什么区别？</h2><p>程序集（Assembly）是逻辑单元的物理分组，而命名空间（Namespace）对类进行分组。<br>此外，一个命名空间也可以跨越多个程序集。</p>
+<h2 id="16-什么是-LINQ？"><a href="#16-什么是-LINQ？" class="headerlink" title="16) 什么是 LINQ？"></a>16) 什么是 LINQ？</h2><p>LINQ 代表语言集成查询（Lanuage Integrated Query）。</p>
+<ul>
+<li>它是 Visual Studio 2008 引入的语言集成查询的首字母缩写词。</li>
+<li>LINQ 是一组功能，可将查询功能扩展到 .NET Framework 语言语法，允许在不考虑数据源的情况下进行数据操作</li>
+<li>LINQ 弥合了对象世界和数据世界之间的鸿沟</li>
+</ul>
+<h2 id="17-什么是-MSIL？"><a href="#17-什么是-MSIL？" class="headerlink" title="17) 什么是 MSIL？"></a>17) 什么是 MSIL？</h2><p>MSIL 是微软中间语言（Microsoft Intermediate Language），它提供了调用方法、存储和初始化值、内存处理、异常处理等的指令。<br>所有 .NET 代码首先编译为中间语言。</p>
+<h2 id="18-所有-Web-窗体都继承自哪个基类？"><a href="#18-所有-Web-窗体都继承自哪个基类？" class="headerlink" title="18) 所有 Web 窗体都继承自哪个基类？"></a>18) 所有 Web 窗体都继承自哪个基类？</h2><p>Page 类</p>
+<h1 id="二、中等问题"><a href="#二、中等问题" class="headerlink" title="二、中等问题"></a>二、中等问题</h1><h2 id="19-解释程序集的不同部分？"><a href="#19-解释程序集的不同部分？" class="headerlink" title="19) 解释程序集的不同部分？"></a>19) 解释程序集的不同部分？</h2><p>清单（MANIFEST）：<br>包含有关程序集版本的信息。</p>
+<p>类型元数据（TYPE METADATA）：<br>包含程序的二进制信息。</p>
+<p>中间语言（MSIL）：<br>中间语言代码。</p>
+<p>资源（RESOURCES）：<br>相关文件列表。</p>
+<h2 id="20-如何防止类被继承？"><a href="#20-如何防止类被继承？" class="headerlink" title="20) 如何防止类被继承？"></a>20) 如何防止类被继承？</h2><p>在 C# 中，我们可以使用 sealed 关键字来防止类被继承。</p>
+<h2 id="21-C-中有哪些不同类型的构造函数？"><a href="#21-C-中有哪些不同类型的构造函数？" class="headerlink" title="21) C# 中有哪些不同类型的构造函数？"></a>21) C# 中有哪些不同类型的构造函数？</h2><p>默认的：<br>如果未显示提供构造函数，则由编译器生成默认的无参数构造函数。</p>
+<p>参数化的：<br>只要构造函数具有至少1个参数，就是参数化的构造函数。</p>
+<p>副本：<br>在构造函数中接受另一个对象作为参数，并用其属性来初始化自身的属性。</p>
+<p>静态：<br>没有访问修饰符，没有任何参数，由 CLR 自动执行，可初始化静态成员。</p>
+<p>私有：<br>使用了 private 访问修饰符，用于防止通过 new 关键字进行实例化。<br>例如：可实现单例类。</p>
+<h2 id="22-有哪些不同类型的程序集？"><a href="#22-有哪些不同类型的程序集？" class="headerlink" title="22) 有哪些不同类型的程序集？"></a>22) 有哪些不同类型的程序集？</h2><p>私有的：<br>只能由应用程序访问。<br>安装在应用程序的安装目录中。</p>
+<p>共享的：<br>可以由多个应用程序共享。<br>安装在 GAC 中。</p>
+<h2 id="23-什么是-MDI-和-SDI？"><a href="#23-什么是-MDI-和-SDI？" class="headerlink" title="23) 什么是 MDI 和 SDI？"></a>23) 什么是 MDI 和 SDI？</h2><p>MDI（Multiple Document Interface）：<br>MDI 允许您打开多个窗口。<br>它将有一个父窗口和尽可能多的子窗口。<br>组件从父窗口共享，如菜单栏、工具栏等。</p>
+<p>SDI（Single Document Interface）：<br>在单独的窗口中打开每个文档。<br>每个窗口都有自己的组件，如菜单栏、工具栏等。<br>因此它不受父窗口的限制。</p>
+<h2 id="24-区分自定义控件和用户控件？"><a href="#24-区分自定义控件和用户控件？" class="headerlink" title="24) 区分自定义控件和用户控件？"></a>24) 区分自定义控件和用户控件？</h2><p>自定义控件（Custom Control）：</p>
+<ul>
+<li>派生自 Control</li>
+<li>动态布局</li>
+<li>定义单个控件</li>
+<li>有完整的工具箱支持</li>
+</ul>
+<p>用户控件（User Control）：</p>
+<ul>
+<li>派生自 UserControl</li>
+<li>静态布局</li>
+<li>定义一组控件</li>
+<li>无法添加到工具箱</li>
+</ul>
+<h2 id="25-什么是垃圾收集器？"><a href="#25-什么是垃圾收集器？" class="headerlink" title="25) 什么是垃圾收集器？"></a>25) 什么是垃圾收集器？</h2><p>.NET 中的垃圾收集器（Garbage Collector）功能释放内存中未使用的代码对象。</p>
+<p>内存堆分为3代：</p>
+<ul>
+<li><p>第 0 代（Generation 0）<br>存储短生存期的对象</p>
+</li>
+<li><p>第 1 代（Generation 1）<br>存储中等生存期的对象</p>
+</li>
+<li><p>第 2 代（Generation 2）<br>存储长生存期的对象</p>
+</li>
+</ul>
+<p>另外，内存堆也分为小型对象堆（SOH）和一个大型对象堆（LOH）。<br>小型对象堆完全符合上述的 3 代回收机制，<br>而这个大型对象堆略有不同，它在第 0 代被设置，只与第 2 代同时回收。</p>
+<h2 id="26-什么是缓存？"><a href="#26-什么是缓存？" class="headerlink" title="26) 什么是缓存？"></a>26) 什么是缓存？</h2><p>缓存只是意味着将数据临时存储在内存中，以便可以从内存中访问数据，而不是在原始位置搜索它。 它提高了应用程序的效率，也提高了它的速度。</p>
+<ul>
+<li><p>页面缓存（Page Caching）<br>可以帮助改善网页加载时间，从而为搜索引擎优化您的网站。<br>页面加载时间会显着影响您的用户体验以及您的网站将访问者转化为买家或潜在客户的能力。</p>
+</li>
+<li><p>数据缓存（Data Caching）<br>缓存是一种在内存中存储常用数据或信息的技术。<br>当下次需要相同的数据或信息时，可以直接从内存中检索，而不是由应用程序生成。</p>
+</li>
+<li><p>片段缓存（Fragment Caching）<br>片段缓存实际上是指在 Web 表单中缓存单个用户控件。<br>每个用户控件可以有独立的缓存持续时间和如何应用缓存行为的实现。<br>当您只需要缓存页面的子集时，片段缓存很有用。</p>
+</li>
+</ul>
+<h2 id="27-解释一下-MVC"><a href="#27-解释一下-MVC" class="headerlink" title="27) 解释一下 MVC"></a>27) 解释一下 MVC</h2><p>MVC 代表模型视图控制器（Model View Controller）。<br>它是构建 .NET 应用程序的架构。</p>
+<p>模型（Model）：<br>Model基本上是处理对象存储和从应用程序的数据库检索的任何应用程序的逻辑部分。</p>
+<p>视图（View）：<br>View处理应用程序的 UI 部分，即用户界面。<br>因此它们从模型中获取信息以进行展示。</p>
+<p>控制器（Controller）：<br>Controller 处理用户交互，从用户输入中找出响应，并呈现用户交互所需的视图。</p>
+<h2 id="28-什么是-CAS"><a href="#28-什么是-CAS" class="headerlink" title="28) 什么是 CAS?"></a>28) 什么是 CAS?</h2><p>CAS表示代码访问安全性（Code Access Security）。<br>CAS是安全模型的一部分，用于防止对资源的未授权访问。<br>它还允许用户设置代码的权限。CLR然后根据权限执行代码。</p>
+<p>CAS只能用于托管代码。<br>如果程序集使用CAS，则将其视为部分受信任的。<br>尽管每次程序集试图访问资源时，它都会执行检查。</p>
+<h2 id="29-解释一下本地化和全球化"><a href="#29-解释一下本地化和全球化" class="headerlink" title="29) 解释一下本地化和全球化"></a>29) 解释一下本地化和全球化</h2><p>本地化（Localization）：<br>这意味着改变已经全球化的应用程序以适应特定的语言或文化。<br>Microsoft.Extension.Localization 用于本地化应用程序内容。</p>
+<p>全球化（Globalization）：<br>全球化是开发支持多种语言的应用程序的过程。<br>还可以将现有的应用程序转换为支持多种语言。</p>
+<h2 id="30-什么是应用程序域？"><a href="#30-什么是应用程序域？" class="headerlink" title="30) 什么是应用程序域？"></a>30) 什么是应用程序域？</h2><p>ASP.NET 引入了一个应用程序域概念或 AppDomain，它就像一个轻量级进程，既像容器又像边界。</p>
+<p>.NET 运行时使用 AppDomain 作为数据和代码的容器。CLR 允许多个 .NET 应用程序在单个 AppDomain 中运行。</p>
+<h2 id="31-NET中的委托是什么"><a href="#31-NET中的委托是什么" class="headerlink" title="31) .NET中的委托是什么?"></a>31) .NET中的委托是什么?</h2><p>.NET 中的委托（delegate）类似于其他编程语言（如 C 或 C++）中的函数指针。<br>委托允许用户将方法的引用封装在委托对象中。<br>可以在程序中传递委托对象，该程序将调用引用的方法。<br>我们可以使用委托方法在类中创建自定义事件。</p>
+<h2 id="32-NET-中抽象类和接口的区别？"><a href="#32-NET-中抽象类和接口的区别？" class="headerlink" title="32) .NET 中抽象类和接口的区别？"></a>32) .NET 中抽象类和接口的区别？</h2><p>抽象类（abstact class）：<br>抽象类为必须由继承实体实现的功能提供了部分实现。<br>抽象类也声明字段。</p>
+<p>接口（interface）：<br>接口仅声明实现类应具有的契约或行为。<br>接口只能声明没有访问修饰符的属性、方法和事件。</p>
+<h2 id="33-区分栈和堆？"><a href="#33-区分栈和堆？" class="headerlink" title="33) 区分栈和堆？"></a>33) 区分栈和堆？</h2><p>栈（Stack）：</p>
+<ul>
+<li>静态内存分配</li>
+<li>存储值类型</li>
+<li>跟踪每个线程及其位置</li>
+</ul>
+<p>堆（Heap）：</p>
+<ul>
+<li>动态内存分配</li>
+<li>存储引用类型</li>
+<li>跟踪更精确的对象或数据</li>
+</ul>
+<h2 id="34-ASP-NET-中有哪些不同的验证器"><a href="#34-ASP-NET-中有哪些不同的验证器" class="headerlink" title="34) ASP.NET 中有哪些不同的验证器?"></a>34) ASP.NET 中有哪些不同的验证器?</h2><p>客户端验证（Client-side validation）：<br>当在客户端浏览器上进行验证时，它被称为客户端验证。通常，JavaScript用于客户端验证。</p>
+<p>服务端验证（Server-side validation）：<br>当在服务器上进行验证时，就称为服务器端验证。<br>服务器端验证被认为是一种安全的验证形式，因为即使用户绕过了客户端验证，我们仍然可以在服务器端验证中捕捉到它。</p>
+<h1 id="三、高级问题"><a href="#三、高级问题" class="headerlink" title="三、高级问题"></a>三、高级问题</h1><h2 id="35-什么是-EXE-和-DLL？"><a href="#35-什么是-EXE-和-DLL？" class="headerlink" title="35) 什么是 EXE 和 DLL？"></a>35) 什么是 EXE 和 DLL？</h2><p>EXE：<br>它是一个可执行文件，可运行为其设计的应用程序。<br>当我们构建应用程序时，会生成一个 exe 文件。<br>因此，程序集在我们运行 exe 时直接加载。<br>但是exe文件不能与其他应用程序共享。</p>
+<p>DLL：<br>它代表由需要隐藏的代码组成的动态链接库。<br>代码封装在这个库中，一个应用程序可以有很多DLL，也可以与其他应用程序共享。</p>
+<h2 id="36-区分函数和存储过程？"><a href="#36-区分函数和存储过程？" class="headerlink" title="36) 区分函数和存储过程？"></a>36) 区分函数和存储过程？</h2><p>函数（Fucntion）：</p>
+<ul>
+<li>必须返回单个值</li>
+<li>它只能有输入参数</li>
+<li>无法使用try catch块进行异常处理</li>
+<li>无法从函数调用存储过程</li>
+</ul>
+<p>存储过程（Stored Procedure）：</p>
+<ul>
+<li>总是用于执行特定任务</li>
+<li>可以同时具有输入或输出参数</li>
+<li>可以使用try catch块进行异常处理</li>
+<li>可以从存储过程中调用函数</li>
+</ul>
+<h2 id="37-列出-ASP-NET-页面的生命周期事件。"><a href="#37-列出-ASP-NET-页面的生命周期事件。" class="headerlink" title="37) 列出 ASP.NET 页面的生命周期事件。"></a>37) 列出 ASP.NET 页面的生命周期事件。</h2><p>Page_PreInit<br>Page_Init<br>Page_InitComplete<br>Page_PreLoad<br>Page_Load<br>Page_LoadComplete<br>Page_PreRender<br>Render</p>
+<h2 id="38-从-ASP-NET-应用程序发送电子邮件的代码是什么？"><a href="#38-从-ASP-NET-应用程序发送电子邮件的代码是什么？" class="headerlink" title="38) 从 ASP.NET 应用程序发送电子邮件的代码是什么？"></a>38) 从 ASP.NET 应用程序发送电子邮件的代码是什么？</h2><p>Mail msg &#x3D; new Mail();<br>msg.From &#x3D; “<a href="mailto:&#97;&#98;&#x63;&#64;&#103;&#x6d;&#x61;&#x69;&#108;&#x2e;&#99;&#x6f;&#109;">&#97;&#98;&#x63;&#64;&#103;&#x6d;&#x61;&#x69;&#108;&#x2e;&#99;&#x6f;&#109;</a>“;<br>msg.To &#x3D; “<a href="mailto:&#120;&#x79;&#x7a;&#x40;&#x67;&#109;&#97;&#x69;&#108;&#46;&#x63;&#111;&#x6d;">&#120;&#x79;&#x7a;&#x40;&#x67;&#109;&#97;&#x69;&#108;&#46;&#x63;&#111;&#x6d;</a>“;<br>msg.Subject &#x3D; “test”;<br>msg.Body &#x3D; “hello”;</p>
+<p>SmtpMail.SmtpServer &#x3D; “localhost”;<br>SmtpMail.Send(msg);</p>
+<p>以上代码无法运行，属于伪代码</p>
+<h2 id="39-ASP-NET-中-Global-asax-文件有哪些事件处理程序？"><a href="#39-ASP-NET-中-Global-asax-文件有哪些事件处理程序？" class="headerlink" title="39) ASP.NET 中 Global.asax 文件有哪些事件处理程序？"></a>39) ASP.NET 中 Global.asax 文件有哪些事件处理程序？</h2><p>Application_Start<br>Application_End<br>Application_AuthenticatedRequest<br>Application_AuthorizeRequest<br>Application_BeginRequest<br>Application_Disposed<br>Application_EndRequest<br>Application_Error<br>Application_PostRequestHandlerExecute<br>Application_PreRequestHandlerExecute<br>Application_PreSendRequestContent<br>Application_PreSendRequestHeader<br>Application_ReleaseRequestState<br>Application_ResolveRequestCache<br>Application_UpdateRequestCache</p>
+<h2 id="40-解释一下基于角色的安全性"><a href="#40-解释一下基于角色的安全性" class="headerlink" title="40) 解释一下基于角色的安全性"></a>40) 解释一下基于角色的安全性</h2><p>基于角色的安全性是指根据组织中分配给用户的角色来实施安全措施。<br>然后根据用户在组织中的角色对其进行授权。<br>例如，Windows 具有基于角色的访问权限，例如用户、管理员和来宾。</p>
+<h2 id="41-什么是跨页公布？"><a href="#41-什么是跨页公布？" class="headerlink" title="41) 什么是跨页公布？"></a>41) 什么是跨页公布？</h2><p>cross-page posting：</p>
+<ul>
+<li>每当我们单击页面上的提交按钮时，数据都存储在同一个页面上。但如果数据存储在不同的页面上，则称为跨页面发布。</li>
+<li>跨页发布可以通过导致回发的 POSTBACKURL 属性实现。</li>
+<li>FindControl 方法可用于获取该页面已发布到的该页面上发布的值。</li>
+</ul>
+<h2 id="42-如何将主题应用于-ASP-NET-应用程序？"><a href="#42-如何将主题应用于-ASP-NET-应用程序？" class="headerlink" title="42) 如何将主题应用于 ASP.NET 应用程序？"></a>42) 如何将主题应用于 ASP.NET 应用程序？</h2><p>下面是更改主题的代码：</p>
+<configuration>
+    <system.web>
+        <pages theme="windows" />
+    </system.web>
+</configuration>
+
+<h2 id="43-解释护照认证"><a href="#43-解释护照认证" class="headerlink" title="43) 解释护照认证"></a>43) 解释护照认证</h2><p>在护照认证期间，它首先检查护照认证cookie，如果cookie不可用，应用程序将重定向到护照登录页面。 Passport 服务然后在登录页面上验证用户的详细信息，如果它们有效，则将它们存储在客户端计算机上，然后将用户重定向到请求的页面。</p>
+<h2 id="44-什么是-ASP-NET-安全控件？"><a href="#44-什么是-ASP-NET-安全控件？" class="headerlink" title="44) 什么是 ASP.NET 安全控件？"></a>44) 什么是 ASP.NET 安全控件？</h2><p><a href="asp:Login">asp:Login</a><br><a href="asp:LoginName">asp:LoginName</a><br><a href="asp:LoginStatus">asp:LoginStatus</a><br><a href="asp:LoginView">asp:LoginView</a><br><a href="asp:PasswordRecovery">asp:PasswordRecovery</a></p>
+<h2 id="45-列出-ASP-NET-转发器控件的所有模板？"><a href="#45-列出-ASP-NET-转发器控件的所有模板？" class="headerlink" title="45) 列出 ASP.NET 转发器控件的所有模板？"></a>45) 列出 ASP.NET 转发器控件的所有模板？</h2><p>ItemTemplate<br>AlternatingItemTemplate<br>SeparatorTemplate<br>HeaderTemplate<br>FooterTemplate</p>
+<h2 id="46-web-config-文件中的-appSettings-部分是什么？"><a href="#46-web-config-文件中的-appSettings-部分是什么？" class="headerlink" title="46) web.config 文件中的 appSettings 部分是什么？"></a>46) web.config 文件中的 appSettings 部分是什么？</h2><configuration>
+    <appsettings>
+        <add key="ConnectionString" value="xxxxxx" />
+    </appsettings>
+</configuration>
+
+<p>web.config 文件中的 appsettings 部分是 web 应用程序的自定义配置</p>
+<h2 id="47-什么是-MIME？"><a href="#47-什么是-MIME？" class="headerlink" title="47) 什么是 MIME？"></a>47) 什么是 MIME？</h2><p>MIME 代表多用途互联网邮件扩展（multipurpose internet mail extensions）。<br>它是电子邮件协议的扩展，允许用户使用该协议在互联网上交换文件。<br>服务器在我们传输的开头插入 MIME 标头。<br>然后客户端使用此标头为标头指示的数据类型选择适当的“播放器”。<br>其中一些播放器内置于网络浏览器中。</p>
+<h2 id="48-什么是-HTTP-handler"><a href="#48-什么是-HTTP-handler" class="headerlink" title="48) 什么是 HTTP handler?"></a>48) 什么是 HTTP handler?</h2><p>对 ASP.NET 应用程序的每个请求都由一个称为 HTTP 处理程序的专用组件处理。<br>它是处理 ASP.NET 应用程序请求的最重要的组件。<br>它使用不同的处理程序来处理不同的文件。<br>网页处理程序创建页面和控件对象，运行您的代码，然后呈现最终的 HTML。</p>
+<ul>
+<li>Page Handler (.aspx)：处理 web 页面</li>
+<li>User Control Handler (.ascx)：处理 web 用户控件页面</li>
+<li>Web Service Handler (.asmx)：处理 web 服务页面</li>
+<li>Trace Handler (trace.axd)：处理跟踪功能</li>
+</ul>
+<h2 id="49-ASP-NET-中有哪些不同类型的-Cookie？"><a href="#49-ASP-NET-中有哪些不同类型的-Cookie？" class="headerlink" title="49) ASP.NET 中有哪些不同类型的 Cookie？"></a>49) ASP.NET 中有哪些不同类型的 Cookie？</h2><p>会话 Cookie（Session cookie）：<br>对于单个会话，它驻留在客户端机器上，直到用户注销。</p>
+<p>持久性 Cookie（Persistent cookie）：<br>在指定的期限内驻留在用户计算机上。可能是一个小时，一个月或永远不会。</p>
+<h2 id="50-区分-ExecuteScalar-和-ExecuteNonQuery？"><a href="#50-区分-ExecuteScalar-和-ExecuteNonQuery？" class="headerlink" title="50) 区分 ExecuteScalar 和 ExecuteNonQuery？"></a>50) 区分 ExecuteScalar 和 ExecuteNonQuery？</h2><p>ExecuteScalar：</p>
+<ul>
+<li>返回输出值</li>
+<li>用于获取单个值</li>
+<li>不返回受影响的行数</li>
+</ul>
+<p>ExecuteNonQuery：</p>
+<ul>
+<li>不返回任何值</li>
+<li>用于执行插入和更新语句</li>
+<li>返回受影响的行数</li>
+</ul>
+<h1 id="相关视频"><a href="#相关视频" class="headerlink" title="相关视频"></a>相关视频</h1><iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/5WwzmjgmqUA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>.NET</tag>
+        <tag>C#</tag>
+        <tag>ASP.NET</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Dev Drive 扩容</title>
+    <url>/blog/zh-CN/dev-drive-expansion/</url>
+    <content><![CDATA[<p><strong>首先备份 VHDX ！！！</strong></p>
+<ol>
+<li>使 DevDrive 离线</li>
+<li>以管理员身份运行 PowerShell</li>
+<li>导航到你存储 dev drive 的 VHDX 文件的目录</li>
+<li>执行命令： <figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line"><span class="built_in">Resize-VHD</span> <span class="literal">-Path</span> <span class="string">&#x27;.\DevDrive.vhdx&#x27;</span> <span class="literal">-SizeBytes</span> <span class="number">100</span>GB</span><br></pre></td></tr></table></figure></li>
+<li>最后使 DevDrive 在线</li>
+<li>修改大小</li>
+</ol>
+]]></content>
+  </entry>
+  <entry>
+    <title>Webpack - tapable 简记</title>
+    <url>/blog/zh-CN/webpack-tapable-usage/</url>
+    <content><![CDATA[<p>关于 tapable 的用法简记</p>
+<span id="more"></span>
+<h2 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h2><ol>
+<li>owner: 实例化一种 Hook 类，比如 SyncHook。</li>
+<li>client：插入事件回调</li>
+<li>onwer: 触发某事件，调用事件回调</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; <span class="title class_">SyncHook</span> &#125; = <span class="built_in">require</span>(<span class="string">&#x27;tapable&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// new</span></span><br><span class="line"><span class="keyword">const</span> syncHook = <span class="keyword">new</span> <span class="title class_">SyncHook</span>([<span class="string">&#x27;eventArg1&#x27;</span>, <span class="string">&#x27;eventArg2&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment">// tap</span></span><br><span class="line">syncHook.<span class="title function_">tap</span>(<span class="string">&#x27;MyEventName&#x27;</span>, <span class="function">(<span class="params">eventArg1, eventArg2</span>) =&gt;</span> &#123;</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;MyEventName Args:&#x27;</span>, eventArg1, eventArg2)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// call</span></span><br><span class="line">syncHook.<span class="title function_">call</span>(<span class="string">&#x27;value1&#x27;</span>, <span class="string">&#x27;value2&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// output:</span></span><br><span class="line"><span class="comment">// MyEventName Args: value1 value2</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="核心设计"><a href="#核心设计" class="headerlink" title="核心设计"></a>核心设计</h2><p><code>Hook.call()</code> 是由 <code>HookCodeFactory.create()</code> 动态创建的，为了提高在触发 <strong>大量的事件回调</strong> 时的性能，通过动态生成 <strong>硬编码</strong> 的<code>Function</code>，来达到 <strong>减少循环和遍历开销，编译优化，避免重复解析</strong> 的性能优化目的。</p>
+<h2 id="UML"><a href="#UML" class="headerlink" title="UML"></a>UML</h2><p><img src="/blog/images/posts/webpack-tapable-uml.png"></p>
+]]></content>
+      <tags>
+        <tag>Webpack</tag>
+      </tags>
+  </entry>
+</search>

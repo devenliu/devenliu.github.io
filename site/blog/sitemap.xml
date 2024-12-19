@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>https://devenliu.com/blog/zh-CN/webpack-tapable-usage/</loc>
+    
+    <lastmod>2024-12-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/zh-CN/dev-drive-expansion/</loc>
+    
+    <lastmod>2024-12-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/zh-CN/dotNET-Interview-Questions-and-Answers/</loc>
+    
+    <lastmod>2024-12-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/zh-CN/OrchardCore-CustomSettings/</loc>
+    
+    <lastmod>2024-12-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/zh-CN/welcome/</loc>
+    
+    <lastmod>2024-12-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/about/index.html</loc>
+    
+    <lastmod>2024-12-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/categories/index.html</loc>
+    
+    <lastmod>2024-12-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/tags/index.html</loc>
+    
+    <lastmod>2024-12-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/404/index.html</loc>
+    
+    <lastmod>2024-12-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+
+  <url>
+    <loc>https://devenliu.com/blog</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  
+  <url>
+    <loc>https://devenliu.com/blog/tags/NET/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/tags/C/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/tags/ASP-NET/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/tags/ASP-NET-Core/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/tags/Orchard-Core/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://devenliu.com/blog/tags/Webpack/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+
+  
+  <url>
+    <loc>https://devenliu.com/blog/categories/NET/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+</urlset>
