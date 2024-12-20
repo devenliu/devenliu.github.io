@@ -25,16 +25,17 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"devenliu.com","root":"/blog/","images":"/blog/images","scheme":"Gemini","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true}}</script><script src="/blog/js/config.js"></script>
 
-    <meta name="description" content="首先备份 VHDX ！！！  使 DevDrive 离线 以管理员身份运行 PowerShell 导航到你存储 dev drive 的 VHDX 文件的目录 执行命令： 1Resize-VHD -Path &amp;#x27;.\DevDrive.vhdx&amp;#x27; -SizeBytes 100GB 最后使 DevDrive 在线 修改大小">
+    <meta name="description" content="记录 Windows 11 中的 DevDrive 虚拟磁盘文件如何扩容。">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Dev Drive 扩容">
 <meta property="og:url" content="https://devenliu.com/blog/zh-CN/dev-drive-expansion/index.html">
 <meta property="og:site_name" content="Deven Liu Blog">
-<meta property="og:description" content="首先备份 VHDX ！！！  使 DevDrive 离线 以管理员身份运行 PowerShell 导航到你存储 dev drive 的 VHDX 文件的目录 执行命令： 1Resize-VHD -Path &amp;#x27;.\DevDrive.vhdx&amp;#x27; -SizeBytes 100GB 最后使 DevDrive 在线 修改大小">
+<meta property="og:description" content="记录 Windows 11 中的 DevDrive 虚拟磁盘文件如何扩容。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-10-18T03:59:00.000Z">
-<meta property="article:modified_time" content="2024-12-19T15:16:17.278Z">
+<meta property="article:modified_time" content="2024-12-20T04:17:20.946Z">
 <meta property="article:author" content="Deven Liu">
+<meta property="article:tag" content="Misc">
 <meta name="twitter:card" content="summary">
 
 
@@ -161,18 +162,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/blog/categories/">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/blog/tags/">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">34</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -195,6 +196,30 @@
 
     
         <div class="pjax">
+        <div class="sidebar-inner sidebar-post-related">
+          <div class="animated">
+              <div class="links-of-blogroll-title"><i class="fa fa-signs-post fa-fw"></i>
+    相关文章
+  </div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/blog/zh-CN/start-kubernetes-in-docker-desktop-for-windows/" rel="bookmark">
+        <time class="popular-posts-time">2021-03-29</time>
+        <br>
+      Docker Desktop for Windows 启动 Kubernetes
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/blog/zh-CN/iis-wcf-404/" rel="bookmark">
+        <time class="popular-posts-time">2022-07-22</time>
+        <br>
+      IIS WCF 404
+      </a>
+    </li>
+  </ul>
+
+          </div>
+        </div>
         </div>
   </aside>
 
@@ -248,7 +273,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-12-19 23:16:17" itemprop="dateModified" datetime="2024-12-19T23:16:17+08:00">2024-12-19</time>
+      <time title="修改时间：2024-12-20 12:17:20" itemprop="dateModified" datetime="2024-12-20T12:17:20+08:00">2024-12-20</time>
     </span>
 
   
@@ -272,7 +297,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>144</span>
+      <span>176</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -289,7 +314,9 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p><strong>首先备份 VHDX ！！！</strong></p>
+    <div class="post-body" itemprop="articleBody"><p>记录 Windows 11 中的 DevDrive 虚拟磁盘文件如何扩容。</p>
+<span id="more"></span>
+<p><strong>首先备份 VHDX ！！！</strong></p>
 <ol>
 <li>使 DevDrive 离线</li>
 <li>以管理员身份运行 PowerShell</li>
@@ -323,13 +350,16 @@
 </ul>
 </div>
 
+          <div class="post-tags">
+              <a href="/blog/tags/Misc/" rel="tag"><i class="fa fa-tag"></i> Misc</a>
+          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/blog/zh-CN/webpack-tapable-usage/" rel="prev" title="Webpack - tapable 简记">
-                  <i class="fa fa-chevron-left"></i> Webpack - tapable 简记
+                <a href="/blog/zh-CN/webpack-tapable-usage/" rel="prev" title="webpack - tapable 简记">
+                  <i class="fa fa-chevron-left"></i> webpack - tapable 简记
                 </a>
             </div>
             <div class="post-nav-item">
@@ -368,13 +398,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">14k</span>
+    <span title="站点总字数">44k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13 分钟</span>
+    <span title="站点阅读时长">40 分钟</span>
   </span>
 </div>
 

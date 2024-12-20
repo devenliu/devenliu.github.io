@@ -1,67 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>欢迎</title>
-    <url>/blog/zh-CN/welcome/</url>
-    <content><![CDATA[<p><img src="https://tu.ltyuanfang.cn/api/fengjing.php"></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>OrchardCore CustomSettings</title>
-    <url>/blog/zh-CN/OrchardCore-CustomSettings/</url>
-    <content><![CDATA[<p>CustomSettings （自定义设置）允许网站管理员创建一组针对网站全局的自定义属性。<br>这些设置在标准设置部分中进行编辑，可以使用特定权限进行保护。</p>
+    <title>webpack - tapable 简记</title>
+    <url>/blog/zh-CN/webpack-tapable-usage/</url>
+    <content><![CDATA[<p>记录 webpack 的 tapable 库的用法。</p>
 <span id="more"></span>
-
-<h2 id="CustomSettings-是什么？"><a href="#CustomSettings-是什么？" class="headerlink" title="CustomSettings 是什么？"></a>CustomSettings 是什么？</h2><p>CustomSettings 是一个数据对象，存储于 ISite 全局对象中。</p>
-<h2 id="如何创建？"><a href="#如何创建？" class="headerlink" title="如何创建？"></a>如何创建？</h2><p>有两种方式可以创建 CustomSettings。</p>
-<ul>
-<li><a href="#%E4%BB%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E5%BC%8F%E5%88%9B%E5%BB%BA">以编程方式创建</a></li>
-<li><a href="#%E5%9C%A8-Admin-%E4%B8%AD%E5%88%9B%E5%BB%BA">在 Admin 中创建</a></li>
-</ul>
-<h2 id="以编程方式创建"><a href="#以编程方式创建" class="headerlink" title="以编程方式创建"></a>以编程方式创建</h2><p>首先需要创建一个 class，包含一些公共属性，如下：</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MySettings</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Prop1 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125; = <span class="built_in">string</span>.Empty;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span>? Prop2 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Prop3 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> Prop4 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>其次由于我们的自定义设置是需要支持在 Admin 中进行修改的，因此我们还需要创建 ViewModel 和 编辑视图。</p>
-<p>ViewModel 示例：</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MySettingsViewModel</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Prop1 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125; = <span class="built_in">string</span>.Empty;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span>? Prop2 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Prop3 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> Prop4 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>编辑视图是一个 Shape，因此需要根据 Template 规则来命名；</p>
-<p>因为这里我们的模板命名为“MySettings_Edit”，所以视图文件应该命名为“MySettings.Edit.cshtml”；</p>
-<p>编辑视图的内容只是一个 Bootstrap 表单，示例：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@model MySettingsViewModel</span><br><span class="line"></span><br><span class="line">&lt;p class=&quot;alert alert-warning&quot;&gt;</span><br><span class="line">    @T[&quot;The current tenant will be reloaded when the settings are saved.&quot;]</span><br><span class="line">&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">&lt;h3&gt;@T[&quot;My Settings&quot;]&lt;/h3&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;mb-3 row&quot; asp-validation-class-for=&quot;Prop1&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;col-large&quot;&gt;</span><br><span class="line">        &lt;label asp-for=&quot;Prop1&quot;&gt;@T[&quot;Prop1&quot;]&lt;/label&gt;</span><br><span class="line">        &lt;input asp-for=&quot;Prop1&quot; class=&quot;form-control&quot; autocomplete=&quot;off&quot; /&gt;</span><br><span class="line">        &lt;span asp-validation-for=&quot;Prop1&quot;&gt;&lt;/span&gt;</span><br><span class="line">        &lt;span class=&quot;hint&quot;&gt;@T[&quot;Prop1 hint&quot;]&lt;/span&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;mb-3 row&quot; asp-validation-class-for=&quot;Prop2&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;col-large&quot;&gt;</span><br><span class="line">        &lt;label asp-for=&quot;Prop2&quot;&gt;@T[&quot;Prop2&quot;]&lt;/label&gt;</span><br><span class="line">        &lt;input asp-for=&quot;Prop2&quot; class=&quot;form-control&quot; autocomplete=&quot;off&quot; /&gt;</span><br><span class="line">        &lt;span asp-validation-for=&quot;Prop2&quot;&gt;&lt;/span&gt;</span><br><span class="line">        &lt;span class=&quot;hint&quot;&gt;@T[&quot;Prop2 hint&quot;]&lt;/span&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;mb-3 row&quot; asp-validation-class-for=&quot;Prop3&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;col-large&quot;&gt;</span><br><span class="line">        &lt;label asp-for=&quot;Prop3&quot;&gt;@T[&quot;Prop3&quot;]&lt;/label&gt;</span><br><span class="line">        &lt;input asp-for=&quot;Prop3&quot; type=&quot;number&quot; class=&quot;form-control&quot; autocomplete=&quot;off&quot; /&gt;</span><br><span class="line">        &lt;span asp-validation-for=&quot;Prop3&quot;&gt;&lt;/span&gt;</span><br><span class="line">        &lt;span class=&quot;hint&quot;&gt;@T[&quot;Prop3 hint&quot;]&lt;/span&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;mb-3&quot; asp-validation-class-for=&quot;Prop4&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;form-check&quot;&gt;</span><br><span class="line">        &lt;input type=&quot;checkbox&quot; class=&quot;form-check-input&quot; asp-for=&quot;Prop4&quot;&gt;</span><br><span class="line">        &lt;label class=&quot;form-check-label&quot; asp-for=&quot;Prop4&quot;&gt;@T[&quot;Prop4&quot;]&lt;/label&gt;</span><br><span class="line">        &lt;span class=&quot;hint dashed&quot;&gt;@T[&quot;Prop4 hint&quot;]&lt;/span&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
-
-<p>然后我们需要实现一个 <code>IDisplayDriver&lt;ISite&gt;</code>，这里我们选择继承自 <code>SectionDisplayDriver&lt;ISite, MySettings&gt;</code>：</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MySettingsDisplayDriver</span>: <span class="title">SectionDisplayDriver</span>&lt;<span class="title">ISite</span>, <span class="title">MySettings</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> IShellHost _shellHost;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ShellSettings _shellSettings;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MySettingsDisplayDriver</span>(<span class="params">IShellHost shellHost, ShellSettings shellSettings</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        _shellHost = shellHost;</span><br><span class="line">        _shellSettings = shellSettings;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">async</span> <span class="title">Task</span>&lt;<span class="title">IDisplayResult</span>&gt; <span class="title">EditAsync</span>(<span class="params">MySettings settings, BuildEditorContext context</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">await</span> Task.Yield();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第一个参数指定了编辑视图的 Shape 模板，</span></span><br><span class="line">        <span class="comment">// 对应 Views/MySettings.Edit.cshtml </span></span><br><span class="line">        <span class="comment">// 或者 Views/MySettings.Edit.liquid</span></span><br><span class="line">        <span class="keyword">return</span> Initialize&lt;MySettingsViewModel&gt;(<span class="string">&quot;MySettings_Edit&quot;</span>, model =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 初始化视图模型</span></span><br><span class="line">            model.Prop1 = settings.Prop1;</span><br><span class="line">            model.Prop2 = settings.Prop2;</span><br><span class="line">            model.Prop3 = settings.Prop3;</span><br><span class="line">            model.Prop4 = settings.Prop4;</span><br><span class="line">        &#125;)</span><br><span class="line">            <span class="comment">// 定义这个自定义设置在表单中的位置（顺序），因为其他模块可能会对这个自定义设置进行扩展</span></span><br><span class="line">            .Location(<span class="string">&quot;Content:1&quot;</span>)</span><br><span class="line">            <span class="comment">// 定义这个自定义设置的分组</span></span><br><span class="line">            .OnGroup(<span class="string">&quot;MySettingsGroup&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">async</span> Task&lt;IDisplayResult&gt; <span class="title">UpdateAsync</span>(<span class="params">MySettings settings, BuildEditorContext context</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (context.GroupId == <span class="string">&quot;MySettingsGroup&quot;</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> model = <span class="keyword">new</span> MySettingsViewModel();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 从提交的编辑表单中读取视图模型的值</span></span><br><span class="line">            <span class="keyword">await</span> context.Updater.TryUpdateModelAsync(model, Prefix);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (context.Updater.ModelState.IsValid)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 如果模型验证通过</span></span><br><span class="line">                <span class="comment">// 则将视图模型的值，保存到自定义设置中。</span></span><br><span class="line">                settings.Host = model.Host;</span><br><span class="line">                settings.ContentType = model.ContentType;</span><br><span class="line">                settings.Account = model.Account;</span><br><span class="line">                settings.Key = model.Key;</span><br><span class="line">                settings.KeyEncrypted = model.KeyEncrypted;</span><br><span class="line">                settings.CheckIp = model.CheckIp;</span><br><span class="line">                settings.AgencyId = model.AgencyId;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 重新加载租户配置</span></span><br><span class="line">                <span class="keyword">await</span> _shellHost.ReleaseShellContextAsync(_shellSettings);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">await</span> EditAsync(settings, context);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>注入服务集合</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Startup</span> : <span class="title">StartupBase</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 注入服务</span></span><br><span class="line">        services.AddScoped&lt;IDisplayDriver&lt;ISite&gt;, MySettingsDisplayDriver&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 最后还需要为自定义设置配置一个 Admin 菜单，这样才能在 Admin 中进行编辑。</span></span><br><span class="line">        services.AddScoped&lt;INavigationProvider, AdminMenu&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Configure</span>(<span class="params">IApplicationBuilder builder, IEndpointRouteBuilder routes, IServiceProvider serviceProvider</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>添加管理菜单</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">AdminMenu</span> : <span class="title">INavigationProvider</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> IStringLocalizer S &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AdminMenu</span>(<span class="params">IStringLocalizer&lt;AdminMenu&gt; localizer</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        S = localizer;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">BuildNavigationAsync</span>(<span class="params"><span class="built_in">string</span> name, NavigationBuilder builder</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">string</span>.Equals(name, <span class="string">&quot;admin&quot;</span>, StringComparison.OrdinalIgnoreCase))</span><br><span class="line">        &#123;</span><br><span class="line">            builder.Add(S[<span class="string">&quot;Configuration&quot;</span>], configuration =&gt; configuration</span><br><span class="line">                    .Add(S[<span class="string">&quot;MySettings&quot;</span>], S[<span class="string">&quot;MySettings&quot;</span>].PrefixPosition(), settings =&gt; settings</span><br><span class="line">                        .Action(<span class="string">&quot;Index&quot;</span>, <span class="string">&quot;Admin&quot;</span>, <span class="keyword">new</span> &#123; area = <span class="string">&quot;OrchardCore.Settings&quot;</span>, groupId = <span class="string">&quot;MySettingsGroup&quot;</span> &#125;)</span><br><span class="line">                        .LocalNav())</span><br><span class="line">                ));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Task.CompletedTask;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="在-Admin-中创建"><a href="#在-Admin-中创建" class="headerlink" title="在 Admin 中创建"></a>在 Admin 中创建</h2><p>相比编程方式创建 CustomSettings，此方法会简单很多。</p>
-<p>具体如下：</p>
-<ol>
-<li>创建一个内容类型 MySettings</li>
-<li>将 Stereotype（构造型）设置为 CustomSettings</li>
-<li>添加需要的字段</li>
-<li>保存即可</li>
+<h2 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h2><ol>
+<li>owner: 实例化一种 Hook 类，比如 SyncHook。</li>
+<li>client：插入事件回调</li>
+<li>onwer: 触发某事件，调用事件回调</li>
 </ol>
-<p>此方法是将 CustomSettings 当作 ContentItem（内容项）进行存储，<br>因此在 GraphiQL 的 ContentItems 查询中能看到 MySettings。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; <span class="title class_">SyncHook</span> &#125; = <span class="built_in">require</span>(<span class="string">&#x27;tapable&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// new</span></span><br><span class="line"><span class="keyword">const</span> syncHook = <span class="keyword">new</span> <span class="title class_">SyncHook</span>([<span class="string">&#x27;eventArg1&#x27;</span>, <span class="string">&#x27;eventArg2&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment">// tap</span></span><br><span class="line">syncHook.<span class="title function_">tap</span>(<span class="string">&#x27;MyEventName&#x27;</span>, <span class="function">(<span class="params">eventArg1, eventArg2</span>) =&gt;</span> &#123;</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;MyEventName Args:&#x27;</span>, eventArg1, eventArg2)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// call</span></span><br><span class="line">syncHook.<span class="title function_">call</span>(<span class="string">&#x27;value1&#x27;</span>, <span class="string">&#x27;value2&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// output:</span></span><br><span class="line"><span class="comment">// MyEventName Args: value1 value2</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="核心设计"><a href="#核心设计" class="headerlink" title="核心设计"></a>核心设计</h2><p><code>Hook.call()</code> 是由 <code>HookCodeFactory.create()</code> 动态创建的，为了提高在触发 <strong>大量的事件回调</strong> 时的性能，通过动态生成 <strong>硬编码</strong> 的<code>Function</code>，来达到 <strong>减少循环和遍历开销，编译优化，避免重复解析</strong> 的性能优化目的。</p>
+<h2 id="UML"><a href="#UML" class="headerlink" title="UML"></a>UML</h2><p><img src="/blog/images/posts/webpack-tapable-uml.png"></p>
 ]]></content>
       <categories>
-        <category>.NET</category>
+        <category>JavaScript</category>
       </categories>
       <tags>
-        <tag>.NET</tag>
-        <tag>C#</tag>
-        <tag>ASP.NET Core</tag>
-        <tag>Orchard Core</tag>
+        <tag>Webpack</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker Desktop for Windows 启动 Kubernetes</title>
+    <url>/blog/zh-CN/start-kubernetes-in-docker-desktop-for-windows/</url>
+    <content><![CDATA[<p>记录 Docker Desktop for Windows 启动 Kubernetes 功能。</p>
+<span id="more"></span>
+<p>在此之前，我已经在网上看过了很多相关的文章，但经过测试，几乎都不能用。</p>
+<p>于是仔细的阅读了 Docker Documenttation 和 MSDN WSL ，最终成功在 Windows 10 + WSL2 + Docker Desktop 的环境下启动了 Kubernetes。</p>
+<p>以下是笔记，希望能够对你有些许帮助，或者节省些许时间。时间真的很宝贵😀。</p>
+<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><h2 id="Windows-10"><a href="#Windows-10" class="headerlink" title="Windows 10"></a>Windows 10</h2><p>Edition: <strong>Windows 10 Pro</strong><br>Version: <strong>20H2</strong><br>Installed on: <strong>2020-10-22</strong><br>OS build: <strong>19042.867</strong><br>Experience: <strong>Windows Feature Experience Pack 120.2212.551.0</strong></p>
+<p>截图1：</p>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_1.png"></p>
+<h2 id="Docker-Desktop-for-Windows"><a href="#Docker-Desktop-for-Windows" class="headerlink" title="Docker Desktop for Windows"></a>Docker Desktop for Windows</h2><p>截图2：</p>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_2.png"></p>
+<p>如图所示，<code>3.2.2</code> 版本的 Docker Desktop 支持的 Kubernetes 版本为 <code>v1.19.7</code></p>
+<h1 id="具体步骤"><a href="#具体步骤" class="headerlink" title="具体步骤"></a>具体步骤</h1><ol>
+<li>清理环境，卸载旧版 Docker Desktop 【可选】</li>
+<li>安装 WSL 和 Linux </li>
+<li>安装并设置 Docker Desktop</li>
+<li>拉取 kubernetes 容器镜像</li>
+<li>启动 Kubernetes</li>
+</ol>
+<h2 id="步骤1-清理环境【可选】"><a href="#步骤1-清理环境【可选】" class="headerlink" title="步骤1 - 清理环境【可选】"></a>步骤1 - 清理环境【可选】</h2><p>卸载旧版Docker Desktop即可 。<br>当然，你也可以选择把 WSL 清理一下。</p>
+<h2 id="步骤2-安装-WSL-和-Linux"><a href="#步骤2-安装-WSL-和-Linux" class="headerlink" title="步骤2 - 安装 WSL 和 Linux"></a>步骤2 - 安装 WSL 和 Linux</h2><blockquote>
+<p>参考MSDN文档：<a href="https://docs.microsoft.com/zh-cn/windows/wsl/install-win10#manual-installation-steps" title="适用于 Linux 的 Windows 子系统安装指南 (Windows 10)">适用于 Linux 的 Windows 子系统安装指南 (Windows 10)</a> </p>
+</blockquote>
+<p><em>这里假设你没有安装过 WSL</em></p>
+<p>以下为摘要步骤：</p>
+<h3 id="2-1-启用适用于-Linux-的-Windows-子系统"><a href="#2-1-启用适用于-Linux-的-Windows-子系统" class="headerlink" title="2.1 - 启用适用于 Linux 的 Windows 子系统"></a>2.1 - 启用适用于 Linux 的 Windows 子系统</h3><blockquote>
+<p>Windows Subsystem for Linux ：适用于Linux的Windows子系统</p>
+</blockquote>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_3.png"></p>
+<h3 id="2-2-下载-Linux-内核更新包"><a href="#2-2-下载-Linux-内核更新包" class="headerlink" title="2.2 - 下载 Linux 内核更新包"></a>2.2 - 下载 Linux 内核更新包</h3><ol>
+<li><p>下载最新包：<br><a href="https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" title="适用于 x64 计算机的 WSL2 Linux 内核更新包">适用于 x64 计算机的 WSL2 Linux 内核更新包</a></p>
+</li>
+<li><p>运行上一步中下载的更新包。（双击以运行 - 系统将提示你提供提升的权限，选择“是”以批准此安装。）<br>安装完成后，请继续执行下一步 - 在安装新的 Linux 分发时，将 WSL 2 设置为默认版本。</p>
+</li>
+</ol>
+<h3 id="2-3-将-WSL-2-设置为默认版本"><a href="#2-3-将-WSL-2-设置为默认版本" class="headerlink" title="2.3 - 将 WSL 2 设置为默认版本"></a>2.3 - 将 WSL 2 设置为默认版本</h3><p>打开 PowerShell，然后在安装新的 Linux 发行版时运行以下命令，将 WSL 2 设置为默认版本：</p>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">wsl <span class="literal">--set-default-version</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-安装所选的-Linux-分发"><a href="#2-4-安装所选的-Linux-分发" class="headerlink" title="2.4 - 安装所选的 Linux 分发"></a>2.4 - 安装所选的 Linux 分发</h3><p>这里以 <code>Ubuntu</code> 为例：  </p>
+<ol>
+<li>打开 Microsoft Store，并选择你偏好的 Linux 分发版。</li>
+</ol>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_4.png"></p>
+<ol start="2">
+<li>在分发版的页面中，选择“获取(Get)”。</li>
+</ol>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_5.png"></p>
+<p>首次启动新安装的 Linux 分发版时，将打开一个控制台窗口，系统会要求你等待一分钟或两分钟，以便文件解压缩并存储到电脑上。 未来的所有启动时间应不到一秒。</p>
+<p>然后，需要为新的 Linux 分发版创建用户帐户和密码。</p>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_6.png"></p>
+<p>祝贺你！现已成功安装并设置了与 Windows 操作系统完全集成的 Linux 分发！</p>
+<div class="note info"><p>以下命令可以查看 wsl linux 分发所用的 wsl 版本，带 <code>*</code> 的为默认Linux分发。</p>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">wsl <span class="literal">--list</span> <span class="literal">--verbose</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-5-安装-Windows-终端（可选）"><a href="#2-5-安装-Windows-终端（可选）" class="headerlink" title="2.5 - 安装 Windows 终端（可选）"></a>2.5 - 安装 Windows 终端（可选）</h3><blockquote>
+<p>Windows Teminal: Windows 终端</p>
+</blockquote>
+<p>Windows 终端可启用多个选项卡（在多个 Linux 命令行、Windows 命令提示符、PowerShell 和 Azure CLI 等之间快速切换）、创建键绑定（用于打开或关闭选项卡、复制粘贴等的快捷方式键）、使用搜索功能，以及使用自定义主题（配色方案、字体样式和大小、背景图像&#x2F;模糊&#x2F;透明度）。</p>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_7.png"></p>
+<h2 id="步骤3-安装并设置-Docker-Desktop"><a href="#步骤3-安装并设置-Docker-Desktop" class="headerlink" title="步骤3 - 安装并设置 Docker Desktop"></a>步骤3 - 安装并设置 Docker Desktop</h2><p><strong>1) 下载：</strong>  </p>
+<ul>
+<li>最新稳定版 <a href="https://hub.docker.com/editions/community/docker-ce-desktop-windows/" title="Download Docker Desktop Stable">Docker Desktop for Windows</a></li>
+</ul>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_8.png"></p>
+<p><strong>2) 安装：</strong></p>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_9.png"></p>
+<p>如果 Windows10 已经安装了 WSL 2，Docker Desktop 会默认启用 WSL。  </p>
+<p><em><strong>如果没有安装 WSL 2 ，请按照前文的描述或者MSDN文档安装 WSL2 后再继续。</strong></em></p>
+<ol start="3">
+<li><p>从 Docker 菜单中，选择 <strong>Settings &gt; General</strong> (设置 &gt; 常规)。  </p>
+</li>
+<li><p>选中 <strong>Use WSL 2 based engine</strong> 复选框。<br>  如果您在支持 WSL 2 的系统上安装了Docker Desktop，则默认情况下将启用此选项。</p>
+</li>
+</ol>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_10.png"></p>
+<ol start="4">
+<li><p>点击 <strong>Apply &amp; Restart</strong> (应用&amp;重启) 保存设置</p>
+</li>
+<li><p>Docker Desktop重新启动后，转到 <strong>Settings &gt; Resources &gt; WSL Integration</strong> (设置 &gt; 资源 &gt; WSL集成)。</p>
+</li>
+<li><p>Docker-WSL 集成将在默认的WSL发行版上启用。<br> （可选）选择要启用Docker-WSL集成的任何其他发行版。</p>
+</li>
+</ol>
+<p>  <img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_11.png"></p>
+<h2 id="步骤4-拉取-kubernetes-容器镜像"><a href="#步骤4-拉取-kubernetes-容器镜像" class="headerlink" title="步骤4 - 拉取 kubernetes 容器镜像"></a>步骤4 - 拉取 kubernetes 容器镜像</h2><p>Kubernetes 的镜像是在国外，由于咱们国内的网络原因，无法直接获取到这些镜像，就需要咱们自行想办法。</p>
+<p>阿里云在 Github 的一个项目 <a href="https://github.com/AliyunContainerService/k8s-for-docker-desktop" title="AliyunContainerService/k8s-for-docker-desktop">AliyunContainerService&#x2F;k8s-for-docker-desktop</a> 帮我们解决了这个问题，所以让我们先把它 clone 下来。</p>
+<p>因为咱们的 Docker Desktop 的 Kubernetes 版本为 v1.19.7，所以我们 clone 下来之后，需要切换到 v1.19.7 这个分支上。</p>
+<p>接下来执行 PowerShell 脚本 <code>load_images.ps1</code>: </p>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">./load_images.ps1</span><br></pre></td></tr></table></figure>
+
+<p>如果遇到 PowerShell 脚本的权限问题，请参考 k8s-for-docker-desktop 的 README 自行解决，或者在评论区留言。</p>
+<h2 id="步骤5-启动-kubernetes"><a href="#步骤5-启动-kubernetes" class="headerlink" title="步骤5 - 启动 kubernetes"></a>步骤5 - 启动 kubernetes</h2><p>从 Docker Desktop 菜单进入 <strong>Settings &gt; Kubernetes</strong>。</p>
+<p>勾选 <strong>Enable Kubernetes</strong>。</p>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_12.png"></p>
+<h2 id="步骤-6-测试"><a href="#步骤-6-测试" class="headerlink" title="步骤 6 - 测试"></a>步骤 6 - 测试</h2><p><strong>测试命令：</strong></p>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">kubectl cluster<span class="literal">-info</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_13.png"></p>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">kubectl get namespaces</span><br></pre></td></tr></table></figure>
+
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_14.png"></p>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">kubectl get pods <span class="literal">--all-namespaces</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_15.png"></p>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">kubectl get services</span><br><span class="line">kubectl get services <span class="literal">--all-namespaces</span></span><br></pre></td></tr></table></figure>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_16.png"></p>
+<p><strong>创建示例 Pod</strong></p>
+<blockquote>
+<p><a href="https://docs.docker.com/get-started/orchestration/#windows" title="Docker Doc pod.yaml">Docker Doc pod.yaml</a></p>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">piVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">demo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">testpod</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">alpine:3.5</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;ping&quot;</span>, <span class="string">&quot;8.8.8.8&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">kubectl apply <span class="operator">-f</span> pod.yaml</span><br></pre></td></tr></table></figure>
+
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_17.png"></p>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_18.png"></p>
+<p><img src="/blog/images/posts/zh-CN/start-kubernets-in-docker-desktop-for-windows/Snipaste_19.png"></p>
+<h1 id="DONE"><a href="#DONE" class="headerlink" title="DONE"></a>DONE</h1><p>总的来说，Docker Desktop 通过 WSL2 很好的支持了 Windows 10，能够让我们在开发环境更好进行 DEBUG 和测试等。</p>
+<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><blockquote>
+<ul>
+<li><a href="https://docs.microsoft.com/zh-cn/windows/wsl/install-win10" title="适用于 Linux 的 Windows 子系统安装指南 (Windows 10)">适用于 Linux 的 Windows 子系统安装指南 (Windows 10)</a>  </li>
+<li><a href="https://docs.docker.com/docker-for-windows/wsl/" title="Docker Desktop WSL 2 backend">Docker Desktop WSL 2 backend</a></li>
+</ul>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>Docker</tag>
+        <tag>Kubernetes</tag>
       </tags>
   </entry>
   <entry>
     <title>.NET 面试问答 | ASP.NET 面试问答</title>
-    <url>/blog/zh-CN/dotNET-Interview-Questions-and-Answers/</url>
+    <url>/blog/zh-CN/dotnet-interview-questions-and-answers/</url>
     <content><![CDATA[<p>整理的关于 .NET Framework 和 ASP.NET 的一些面试问答。</p>
 <span id="more"></span>
 
@@ -251,7 +346,7 @@
 <li>可以从存储过程中调用函数</li>
 </ul>
 <h2 id="37-列出-ASP-NET-页面的生命周期事件。"><a href="#37-列出-ASP-NET-页面的生命周期事件。" class="headerlink" title="37) 列出 ASP.NET 页面的生命周期事件。"></a>37) 列出 ASP.NET 页面的生命周期事件。</h2><p>Page_PreInit<br>Page_Init<br>Page_InitComplete<br>Page_PreLoad<br>Page_Load<br>Page_LoadComplete<br>Page_PreRender<br>Render</p>
-<h2 id="38-从-ASP-NET-应用程序发送电子邮件的代码是什么？"><a href="#38-从-ASP-NET-应用程序发送电子邮件的代码是什么？" class="headerlink" title="38) 从 ASP.NET 应用程序发送电子邮件的代码是什么？"></a>38) 从 ASP.NET 应用程序发送电子邮件的代码是什么？</h2><p>Mail msg &#x3D; new Mail();<br>msg.From &#x3D; “<a href="mailto:&#97;&#98;&#x63;&#64;&#103;&#x6d;&#x61;&#x69;&#108;&#x2e;&#99;&#x6f;&#109;">&#97;&#98;&#x63;&#64;&#103;&#x6d;&#x61;&#x69;&#108;&#x2e;&#99;&#x6f;&#109;</a>“;<br>msg.To &#x3D; “<a href="mailto:&#120;&#x79;&#x7a;&#x40;&#x67;&#109;&#97;&#x69;&#108;&#46;&#x63;&#111;&#x6d;">&#120;&#x79;&#x7a;&#x40;&#x67;&#109;&#97;&#x69;&#108;&#46;&#x63;&#111;&#x6d;</a>“;<br>msg.Subject &#x3D; “test”;<br>msg.Body &#x3D; “hello”;</p>
+<h2 id="38-从-ASP-NET-应用程序发送电子邮件的代码是什么？"><a href="#38-从-ASP-NET-应用程序发送电子邮件的代码是什么？" class="headerlink" title="38) 从 ASP.NET 应用程序发送电子邮件的代码是什么？"></a>38) 从 ASP.NET 应用程序发送电子邮件的代码是什么？</h2><p>Mail msg &#x3D; new Mail();<br>msg.From &#x3D; “<a href="mailto:&#x61;&#x62;&#x63;&#64;&#x67;&#109;&#x61;&#105;&#x6c;&#46;&#x63;&#111;&#x6d;">&#x61;&#x62;&#x63;&#64;&#x67;&#109;&#x61;&#105;&#x6c;&#46;&#x63;&#111;&#x6d;</a>“;<br>msg.To &#x3D; “<a href="mailto:&#x78;&#121;&#x7a;&#64;&#x67;&#x6d;&#x61;&#x69;&#108;&#46;&#99;&#111;&#x6d;">&#x78;&#121;&#x7a;&#64;&#x67;&#x6d;&#x61;&#x69;&#108;&#46;&#99;&#111;&#x6d;</a>“;<br>msg.Subject &#x3D; “test”;<br>msg.Body &#x3D; “hello”;</p>
 <p>SmtpMail.SmtpServer &#x3D; “localhost”;<br>SmtpMail.Send(msg);</p>
 <p>以上代码无法运行，属于伪代码</p>
 <h2 id="39-ASP-NET-中-Global-asax-文件有哪些事件处理程序？"><a href="#39-ASP-NET-中-Global-asax-文件有哪些事件处理程序？" class="headerlink" title="39) ASP.NET 中 Global.asax 文件有哪些事件处理程序？"></a>39) ASP.NET 中 Global.asax 文件有哪些事件处理程序？</h2><p>Application_Start<br>Application_End<br>Application_AuthenticatedRequest<br>Application_AuthorizeRequest<br>Application_BeginRequest<br>Application_Disposed<br>Application_EndRequest<br>Application_Error<br>Application_PostRequestHandlerExecute<br>Application_PreRequestHandlerExecute<br>Application_PreSendRequestContent<br>Application_PreSendRequestHeader<br>Application_ReleaseRequestState<br>Application_ResolveRequestCache<br>Application_UpdateRequestCache</p>
@@ -306,15 +401,111 @@
         <category>.NET</category>
       </categories>
       <tags>
-        <tag>.NET</tag>
-        <tag>C#</tag>
         <tag>ASP.NET</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>OrchardCore CustomSettings</title>
+    <url>/blog/zh-CN/orchardcore-customsettings/</url>
+    <content><![CDATA[<p>CustomSettings （自定义设置）允许网站管理员创建一组针对网站全局的自定义属性。<br>这些设置在标准设置部分中进行编辑，可以使用特定权限进行保护。</p>
+<span id="more"></span>
+
+<h2 id="CustomSettings-是什么？"><a href="#CustomSettings-是什么？" class="headerlink" title="CustomSettings 是什么？"></a>CustomSettings 是什么？</h2><p>CustomSettings 是一个数据对象，存储于 ISite 全局对象中。</p>
+<h2 id="如何创建？"><a href="#如何创建？" class="headerlink" title="如何创建？"></a>如何创建？</h2><p>有两种方式可以创建 CustomSettings。</p>
+<ul>
+<li><a href="#%E4%BB%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E5%BC%8F%E5%88%9B%E5%BB%BA">以编程方式创建</a></li>
+<li><a href="#%E5%9C%A8-Admin-%E4%B8%AD%E5%88%9B%E5%BB%BA">在 Admin 中创建</a></li>
+</ul>
+<h2 id="以编程方式创建"><a href="#以编程方式创建" class="headerlink" title="以编程方式创建"></a>以编程方式创建</h2><p>首先需要创建一个 class，包含一些公共属性，如下：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MySettings</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Prop1 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125; = <span class="built_in">string</span>.Empty;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span>? Prop2 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Prop3 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> Prop4 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>其次由于我们的自定义设置是需要支持在 Admin 中进行修改的，因此我们还需要创建 ViewModel 和 编辑视图。</p>
+<p>ViewModel 示例：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MySettingsViewModel</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Prop1 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125; = <span class="built_in">string</span>.Empty;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span>? Prop2 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Prop3 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> Prop4 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编辑视图是一个 Shape，因此需要根据 Template 规则来命名；</p>
+<p>因为这里我们的模板命名为“MySettings_Edit”，所以视图文件应该命名为“MySettings.Edit.cshtml”；</p>
+<p>编辑视图的内容只是一个 Bootstrap 表单，示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@model MySettingsViewModel</span><br><span class="line"></span><br><span class="line">&lt;p class=&quot;alert alert-warning&quot;&gt;</span><br><span class="line">    @T[&quot;The current tenant will be reloaded when the settings are saved.&quot;]</span><br><span class="line">&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">&lt;h3&gt;@T[&quot;My Settings&quot;]&lt;/h3&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;mb-3 row&quot; asp-validation-class-for=&quot;Prop1&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;col-large&quot;&gt;</span><br><span class="line">        &lt;label asp-for=&quot;Prop1&quot;&gt;@T[&quot;Prop1&quot;]&lt;/label&gt;</span><br><span class="line">        &lt;input asp-for=&quot;Prop1&quot; class=&quot;form-control&quot; autocomplete=&quot;off&quot; /&gt;</span><br><span class="line">        &lt;span asp-validation-for=&quot;Prop1&quot;&gt;&lt;/span&gt;</span><br><span class="line">        &lt;span class=&quot;hint&quot;&gt;@T[&quot;Prop1 hint&quot;]&lt;/span&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;mb-3 row&quot; asp-validation-class-for=&quot;Prop2&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;col-large&quot;&gt;</span><br><span class="line">        &lt;label asp-for=&quot;Prop2&quot;&gt;@T[&quot;Prop2&quot;]&lt;/label&gt;</span><br><span class="line">        &lt;input asp-for=&quot;Prop2&quot; class=&quot;form-control&quot; autocomplete=&quot;off&quot; /&gt;</span><br><span class="line">        &lt;span asp-validation-for=&quot;Prop2&quot;&gt;&lt;/span&gt;</span><br><span class="line">        &lt;span class=&quot;hint&quot;&gt;@T[&quot;Prop2 hint&quot;]&lt;/span&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;mb-3 row&quot; asp-validation-class-for=&quot;Prop3&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;col-large&quot;&gt;</span><br><span class="line">        &lt;label asp-for=&quot;Prop3&quot;&gt;@T[&quot;Prop3&quot;]&lt;/label&gt;</span><br><span class="line">        &lt;input asp-for=&quot;Prop3&quot; type=&quot;number&quot; class=&quot;form-control&quot; autocomplete=&quot;off&quot; /&gt;</span><br><span class="line">        &lt;span asp-validation-for=&quot;Prop3&quot;&gt;&lt;/span&gt;</span><br><span class="line">        &lt;span class=&quot;hint&quot;&gt;@T[&quot;Prop3 hint&quot;]&lt;/span&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;div class=&quot;mb-3&quot; asp-validation-class-for=&quot;Prop4&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;form-check&quot;&gt;</span><br><span class="line">        &lt;input type=&quot;checkbox&quot; class=&quot;form-check-input&quot; asp-for=&quot;Prop4&quot;&gt;</span><br><span class="line">        &lt;label class=&quot;form-check-label&quot; asp-for=&quot;Prop4&quot;&gt;@T[&quot;Prop4&quot;]&lt;/label&gt;</span><br><span class="line">        &lt;span class=&quot;hint dashed&quot;&gt;@T[&quot;Prop4 hint&quot;]&lt;/span&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们需要实现一个 <code>IDisplayDriver&lt;ISite&gt;</code>，这里我们选择继承自 <code>SectionDisplayDriver&lt;ISite, MySettings&gt;</code>：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MySettingsDisplayDriver</span>: <span class="title">SectionDisplayDriver</span>&lt;<span class="title">ISite</span>, <span class="title">MySettings</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> IShellHost _shellHost;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ShellSettings _shellSettings;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MySettingsDisplayDriver</span>(<span class="params">IShellHost shellHost, ShellSettings shellSettings</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        _shellHost = shellHost;</span><br><span class="line">        _shellSettings = shellSettings;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">async</span> <span class="title">Task</span>&lt;<span class="title">IDisplayResult</span>&gt; <span class="title">EditAsync</span>(<span class="params">MySettings settings, BuildEditorContext context</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">await</span> Task.Yield();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第一个参数指定了编辑视图的 Shape 模板，</span></span><br><span class="line">        <span class="comment">// 对应 Views/MySettings.Edit.cshtml </span></span><br><span class="line">        <span class="comment">// 或者 Views/MySettings.Edit.liquid</span></span><br><span class="line">        <span class="keyword">return</span> Initialize&lt;MySettingsViewModel&gt;(<span class="string">&quot;MySettings_Edit&quot;</span>, model =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 初始化视图模型</span></span><br><span class="line">            model.Prop1 = settings.Prop1;</span><br><span class="line">            model.Prop2 = settings.Prop2;</span><br><span class="line">            model.Prop3 = settings.Prop3;</span><br><span class="line">            model.Prop4 = settings.Prop4;</span><br><span class="line">        &#125;)</span><br><span class="line">            <span class="comment">// 定义这个自定义设置在表单中的位置（顺序），因为其他模块可能会对这个自定义设置进行扩展</span></span><br><span class="line">            .Location(<span class="string">&quot;Content:1&quot;</span>)</span><br><span class="line">            <span class="comment">// 定义这个自定义设置的分组</span></span><br><span class="line">            .OnGroup(<span class="string">&quot;MySettingsGroup&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">async</span> Task&lt;IDisplayResult&gt; <span class="title">UpdateAsync</span>(<span class="params">MySettings settings, BuildEditorContext context</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (context.GroupId == <span class="string">&quot;MySettingsGroup&quot;</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> model = <span class="keyword">new</span> MySettingsViewModel();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 从提交的编辑表单中读取视图模型的值</span></span><br><span class="line">            <span class="keyword">await</span> context.Updater.TryUpdateModelAsync(model, Prefix);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (context.Updater.ModelState.IsValid)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 如果模型验证通过</span></span><br><span class="line">                <span class="comment">// 则将视图模型的值，保存到自定义设置中。</span></span><br><span class="line">                settings.Host = model.Host;</span><br><span class="line">                settings.ContentType = model.ContentType;</span><br><span class="line">                settings.Account = model.Account;</span><br><span class="line">                settings.Key = model.Key;</span><br><span class="line">                settings.KeyEncrypted = model.KeyEncrypted;</span><br><span class="line">                settings.CheckIp = model.CheckIp;</span><br><span class="line">                settings.AgencyId = model.AgencyId;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 重新加载租户配置</span></span><br><span class="line">                <span class="keyword">await</span> _shellHost.ReleaseShellContextAsync(_shellSettings);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">await</span> EditAsync(settings, context);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>注入服务集合</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Startup</span> : <span class="title">StartupBase</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 注入服务</span></span><br><span class="line">        services.AddScoped&lt;IDisplayDriver&lt;ISite&gt;, MySettingsDisplayDriver&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 最后还需要为自定义设置配置一个 Admin 菜单，这样才能在 Admin 中进行编辑。</span></span><br><span class="line">        services.AddScoped&lt;INavigationProvider, AdminMenu&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Configure</span>(<span class="params">IApplicationBuilder builder, IEndpointRouteBuilder routes, IServiceProvider serviceProvider</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加管理菜单</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">AdminMenu</span> : <span class="title">INavigationProvider</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> IStringLocalizer S &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AdminMenu</span>(<span class="params">IStringLocalizer&lt;AdminMenu&gt; localizer</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        S = localizer;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">BuildNavigationAsync</span>(<span class="params"><span class="built_in">string</span> name, NavigationBuilder builder</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">string</span>.Equals(name, <span class="string">&quot;admin&quot;</span>, StringComparison.OrdinalIgnoreCase))</span><br><span class="line">        &#123;</span><br><span class="line">            builder.Add(S[<span class="string">&quot;Configuration&quot;</span>], configuration =&gt; configuration</span><br><span class="line">                    .Add(S[<span class="string">&quot;MySettings&quot;</span>], S[<span class="string">&quot;MySettings&quot;</span>].PrefixPosition(), settings =&gt; settings</span><br><span class="line">                        .Action(<span class="string">&quot;Index&quot;</span>, <span class="string">&quot;Admin&quot;</span>, <span class="keyword">new</span> &#123; area = <span class="string">&quot;OrchardCore.Settings&quot;</span>, groupId = <span class="string">&quot;MySettingsGroup&quot;</span> &#125;)</span><br><span class="line">                        .LocalNav())</span><br><span class="line">                ));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Task.CompletedTask;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="在-Admin-中创建"><a href="#在-Admin-中创建" class="headerlink" title="在 Admin 中创建"></a>在 Admin 中创建</h2><p>相比编程方式创建 CustomSettings，此方法会简单很多。</p>
+<p>具体如下：</p>
+<ol>
+<li>创建一个内容类型 MySettings</li>
+<li>将 Stereotype（构造型）设置为 CustomSettings</li>
+<li>添加需要的字段</li>
+<li>保存即可</li>
+</ol>
+<p>此方法是将 CustomSettings 当作 ContentItem（内容项）进行存储，<br>因此在 GraphiQL 的 ContentItems 查询中能看到 MySettings。</p>
+]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>ASP.NET Core</tag>
+        <tag>Orchard Core</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>在 Azure DevOps Pipeline 中签出子模块或多个代码库</title>
+    <url>/blog/zh-CN/azure-devops-pipelines-submodules-or-multi-repo-checkout/</url>
+    <content><![CDATA[<p>记录如何在 Azure Pipelines 中签出 Git 子模块或者多个代码库。</p>
+<span id="more"></span>
+<h2 id="存储库类型："><a href="#存储库类型：" class="headerlink" title="存储库类型："></a>存储库类型：</h2><ul>
+<li>公共库</li>
+<li>私有库-同项目</li>
+<li>私有库-不同项目</li>
+<li>私有库-不同组织（使用服务连接）</li>
+</ul>
+<p>由于 Azure Repos 受到保护，所以有两种做法。</p>
+<h2 id="第一种：关闭-Pipeline-Repo-保护设置（不推荐）"><a href="#第一种：关闭-Pipeline-Repo-保护设置（不推荐）" class="headerlink" title="第一种：关闭 Pipeline Repo 保护设置（不推荐）"></a>第一种：关闭 Pipeline Repo 保护设置（不推荐）</h2><p>组织级别：<br>OrgnaizationSettings &#x2F; Pipelines &#x2F; Settings：Protect access to repositories in YAML pipelines</p>
+<p><img src="/blog/images/posts/zh-CN/azure-devops-pipelines-submodules-or-multi-repo-checkout/Snipaste_1.png"></p>
+<p>项目级别：<br><code>ProjectSettings / Pipelines / Settings</code>：Protect access to repositories in YAML pipelines</p>
+<p><img src="/blog/images/posts/zh-CN/azure-devops-pipelines-submodules-or-multi-repo-checkout/Snipaste_2.png"></p>
+<h2 id="第二种：在管道中显示地引用代码库资源（推荐）"><a href="#第二种：在管道中显示地引用代码库资源（推荐）" class="headerlink" title="第二种：在管道中显示地引用代码库资源（推荐）"></a>第二种：在管道中显示地引用代码库资源（推荐）</h2><h3 id="资源定义"><a href="#资源定义" class="headerlink" title="资源定义"></a>资源定义</h3><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"> <span class="bullet">-</span> <span class="attr">repository:</span> <span class="string">&lt;repo_id&gt;</span></span><br><span class="line">   <span class="attr">type:</span> <span class="string">&lt;git</span> <span class="string">|</span> <span class="string">github</span> <span class="string">...&gt;</span></span><br><span class="line">   <span class="attr">name:</span> <span class="string">&lt;project&gt;/&lt;repo&gt;</span></span><br><span class="line">   <span class="attr">ref:</span> <span class="string">refs/heads/&lt;branch&gt;</span></span><br><span class="line"><span class="attr">endpoint:</span> <span class="string">&lt;service_connection_id&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="资源示例"><a href="#资源示例" class="headerlink" title="资源示例"></a>资源示例</h3><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">resources:</span></span><br><span class="line">  <span class="attr">repositories:</span></span><br><span class="line">  <span class="comment"># 位于 Azure DevOps 同一个组织，同一个项目</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">repository:</span> <span class="string">awe-id</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">awe</span></span><br><span class="line">    <span class="attr">ref:</span> <span class="string">refs/heads/main</span></span><br><span class="line">	</span><br><span class="line">  <span class="comment"># 位于 Azure DevOps 同一个组织，其他项目</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">repository:</span> <span class="string">bar-id</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">other-project/bar</span></span><br><span class="line">    <span class="attr">ref:</span> <span class="string">refs/heads/main</span></span><br><span class="line">	</span><br><span class="line">  <span class="comment"># 位于 Azure DevOps 不同的组织</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">repository:</span> <span class="string">foo-id</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">common/foo</span></span><br><span class="line">    <span class="attr">ref:</span> <span class="string">refs/heads/main</span></span><br><span class="line">	<span class="attr">endpoint:</span> <span class="string">MyOrgServiceConnection</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">job:</span> <span class="string">yourJobName</span></span><br><span class="line">  </span><br><span class="line">  <span class="attr">uses:</span></span><br><span class="line">    <span class="attr">repositories:</span></span><br><span class="line">	<span class="bullet">-</span> <span class="string">awe-id</span></span><br><span class="line">	<span class="bullet">-</span> <span class="string">bar-id</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">steps:</span></span><br><span class="line">  <span class="comment"># 签出当前代码库的子模块 awe</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">checkout:</span> <span class="string">self</span></span><br><span class="line">    <span class="attr">submodules:</span> <span class="literal">true</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment"># 签出其他项目的代码库 bar</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">checkout:</span> <span class="string">bar-id</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment"># 签出其他组织的代码库 foo</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">checkout:</span> <span class="string">foo-id</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment"># ....</span></span><br><span class="line">	</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务连接授权（如有）"><a href="#服务连接授权（如有）" class="headerlink" title="服务连接授权（如有）"></a>服务连接授权（如有）</h3><p>如果使用了服务连接，则需要授权给 Pipeline，才能在 Pipeline 中使用。</p>
+<h4 id="方式一：授权全部管道"><a href="#方式一：授权全部管道" class="headerlink" title="方式一：授权全部管道"></a>方式一：授权全部管道</h4><p>在服务连接的属性中开启。</p>
+<p><img src="/blog/images/posts/zh-CN/azure-devops-pipelines-submodules-or-multi-repo-checkout/Snipaste_3.png"></p>
+<h4 id="方式二：授权指定管道"><a href="#方式二：授权指定管道" class="headerlink" title="方式二：授权指定管道"></a>方式二：授权指定管道</h4><p>在服务连接的安全性中，添加对指定管道的授权。</p>
+<p><img src="/blog/images/posts/zh-CN/azure-devops-pipelines-submodules-or-multi-repo-checkout/Snipaste_4.png"></p>
+<p><img src="/blog/images/posts/zh-CN/azure-devops-pipelines-submodules-or-multi-repo-checkout/Snipaste_5.png"></p>
+<p>然后运行管道，在管道的执行页面中，将会提示你进行授权，点击之后管道成功运行。</p>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><h3 id="Azure-Pipelines"><a href="#Azure-Pipelines" class="headerlink" title="Azure Pipelines"></a>Azure Pipelines</h3><ul>
+<li><a href="https://learn.microsoft.com/zh-cn/azure/devops/pipelines/repos/pipeline-options-for-git?view=azure-devops&tabs=yaml#azure-repos" title="适用于 Git 存储库的选项">适用于 Git 存储库的选项</a></li>
+<li><a href="https://learn.microsoft.com/zh-cn/azure/devops/pipelines/process/resources?view=azure-devops#repository-resource-definition" title="存储库资源定义">存储库资源定义</a></li>
+<li><a href="https://learn.microsoft.com/zh-cn/azure/devops/pipelines/yaml-schema/resources-repositories-repository?view=azure-pipelines" title="resources.repositories.repository 定义">resources.repositories.repository 定义</a></li>
+<li><a href="https://learn.microsoft.com/zh-cn/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml#authorize-pipelines" title="服务连接-授权管道">服务连接 - 授权管道</a></li>
+<li><a href="https://learn.microsoft.com/zh-cn/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml" title="在管道中指定作业">在管道中指定作业</a></li>
+</ul>
+<h3 id="Posts"><a href="#Posts" class="headerlink" title="Posts"></a>Posts</h3><ul>
+<li><a href="https://www.starwindsoftware.com/blog/getting-git-submodules-in-private-azure-devops-repositories-to-work-in-a-pipeline" title="获取私有 Azure DevOps 存储库中的 Git 子模块以在管道中工作">Getting Git submodules in private Azure DevOps repositories to work in a pipeline</a></li>
+<li><a href="https://www.linkedin.com/pulse/git-dealing-error-tf401019-when-using-submodules-azure-cardamone/" title="[2023]Git: Dealing with error TF401019 when using submodules in Azure Pipelines">[2023]Git: Dealing with error TF401019 when using submodules in Azure Pipelines</a></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>DevOps</tag>
+        <tag>Azure</tag>
+        <tag>Azure Pipelines</tag>
       </tags>
   </entry>
   <entry>
     <title>Dev Drive 扩容</title>
     <url>/blog/zh-CN/dev-drive-expansion/</url>
-    <content><![CDATA[<p><strong>首先备份 VHDX ！！！</strong></p>
+    <content><![CDATA[<p>记录 Windows 11 中的 DevDrive 虚拟磁盘文件如何扩容。</p>
+<span id="more"></span>
+<p><strong>首先备份 VHDX ！！！</strong></p>
 <ol>
 <li>使 DevDrive 离线</li>
 <li>以管理员身份运行 PowerShell</li>
@@ -324,24 +515,691 @@
 <li>修改大小</li>
 </ol>
 ]]></content>
+      <tags>
+        <tag>Misc</tag>
+      </tags>
   </entry>
   <entry>
-    <title>Webpack - tapable 简记</title>
-    <url>/blog/zh-CN/webpack-tapable-usage/</url>
-    <content><![CDATA[<p>关于 tapable 的用法简记</p>
+    <title>YOLOX 训练自定义数据 - VOC2007 数据集</title>
+    <url>/blog/zh-CN/yolox-train-custom-dataset-voc2007/</url>
+    <content><![CDATA[<p>YOLOX 训练自定义数据 - VOC2007 数据集</p>
 <span id="more"></span>
-<h2 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h2><ol>
-<li>owner: 实例化一种 Hook 类，比如 SyncHook。</li>
-<li>client：插入事件回调</li>
-<li>onwer: 触发某事件，调用事件回调</li>
-</ol>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; <span class="title class_">SyncHook</span> &#125; = <span class="built_in">require</span>(<span class="string">&#x27;tapable&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// new</span></span><br><span class="line"><span class="keyword">const</span> syncHook = <span class="keyword">new</span> <span class="title class_">SyncHook</span>([<span class="string">&#x27;eventArg1&#x27;</span>, <span class="string">&#x27;eventArg2&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment">// tap</span></span><br><span class="line">syncHook.<span class="title function_">tap</span>(<span class="string">&#x27;MyEventName&#x27;</span>, <span class="function">(<span class="params">eventArg1, eventArg2</span>) =&gt;</span> &#123;</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;MyEventName Args:&#x27;</span>, eventArg1, eventArg2)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// call</span></span><br><span class="line">syncHook.<span class="title function_">call</span>(<span class="string">&#x27;value1&#x27;</span>, <span class="string">&#x27;value2&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// output:</span></span><br><span class="line"><span class="comment">// MyEventName Args: value1 value2</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><a href="https://yolox.readthedocs.io/en/latest/train_custom_data.html" title="官方文档 - Train Custom Data">官方文档 - Train Custom Data</a></p>
+</blockquote>
+<h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><ul>
+<li>Windows11</li>
+<li>Git，可选</li>
+<li>Python 3.10.9 <a href="https://www.python.org/ftp/python/3.10.9/python-3.10.9-amd64.exe" title="[下载地址]">[下载地址]</a></li>
+<li>GTX 1050Ti</li>
+<li>CUDA Toolkits 12</li>
+</ul>
+<h2 id="先决条件"><a href="#先决条件" class="headerlink" title="先决条件"></a>先决条件</h2><ul>
+<li>安装 Nvidia 显卡驱动 <a href="https://www.nvidia.cn/geforce/drivers/" title="[下载地址]">[下载地址]</a></li>
+<li>安装 Nvidia CUDA Toolkits <a href="https://developer.nvidia.com/cuda-downloads" title="[下载地址]">[下载地址]</a></li>
+</ul>
+<h2 id="主要步骤"><a href="#主要步骤" class="headerlink" title="主要步骤"></a>主要步骤</h2><ul>
+<li>一、下载 YOLOX 源代码</li>
+<li>二、按需修改 YOLOX 源代码</li>
+<li>三、制作 VOC2007 数据集</li>
+<li>四、训练</li>
+<li>五、预测</li>
+</ul>
+<h2 id="一、下载-YOLOX-源代码"><a href="#一、下载-YOLOX-源代码" class="headerlink" title="一、下载 YOLOX 源代码"></a>一、下载 YOLOX 源代码</h2><h3 id="1-1-克隆源代码"><a href="#1-1-克隆源代码" class="headerlink" title="1.1 克隆源代码"></a>1.1 克隆源代码</h3><p>克隆源代码到指定目录，并进入YOLOX目录：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/Megvii-BaseDetection/YOLOX.git</span><br><span class="line"><span class="built_in">cd</span> ./YOLOX</span><br></pre></td></tr></table></figure>
+<p><em>如未安装 Git 工具，也可以在 GitHub 上直接下载压缩包。</em></p>
+<h3 id="1-2-创建虚拟环境"><a href="#1-2-创建虚拟环境" class="headerlink" title="1.2 创建虚拟环境"></a>1.2 创建虚拟环境</h3><p>在根目录创建 venv 虚拟环境，并激活：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">python -m venv .venv</span><br><span class="line">.venv/Scripts/activate</span><br></pre></td></tr></table></figure>
 
-<h2 id="核心设计"><a href="#核心设计" class="headerlink" title="核心设计"></a>核心设计</h2><p><code>Hook.call()</code> 是由 <code>HookCodeFactory.create()</code> 动态创建的，为了提高在触发 <strong>大量的事件回调</strong> 时的性能，通过动态生成 <strong>硬编码</strong> 的<code>Function</code>，来达到 <strong>减少循环和遍历开销，编译优化，避免重复解析</strong> 的性能优化目的。</p>
-<h2 id="UML"><a href="#UML" class="headerlink" title="UML"></a>UML</h2><p><img src="/blog/images/posts/webpack-tapable-uml.png"></p>
+<p><strong>注意：后续所有命令的运行，凡是需要运行 Python 的，都需要在已激活虚拟环境的终端中运行。</strong></p>
+<h3 id="1-3-安装依赖"><a href="#1-3-安装依赖" class="headerlink" title="1.3 安装依赖"></a>1.3 安装依赖</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装依赖</span></span><br><span class="line">python -m pip install -r requirements.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 以开发模式安装 yolox 自身</span></span><br><span class="line">python -m pip install -v -e ./</span><br></pre></td></tr></table></figure>
+
+<p>使用 pip 的镜像地址可以加快下载速度，如清华大学镜像。</p>
+<p>在 Windows 的用户目录下，创建 pip&#x2F;pip.ini 文件并写入以下内容即可：</p>
+<figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url=https://pypi.tuna.tsinghua.edu.cn/simple</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-4-安装-PyTorch-的-GPU-版本"><a href="#1-4-安装-PyTorch-的-GPU-版本" class="headerlink" title="1.4 安装 PyTorch 的 GPU 版本"></a>1.4 安装 PyTorch 的 GPU 版本</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 先卸载 CPU 版本</span></span><br><span class="line">python -m pip uninstall torch torchvision torchaudio</span><br><span class="line"></span><br><span class="line"><span class="comment"># 再安装 GPU 版本</span></span><br><span class="line">python -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121</span><br></pre></td></tr></table></figure>
+
+<p>参考 <a href="https://pytorch.org/" title="PyTorch">PyTorch</a> 官网<br><img src="/blog/images/posts/zh-CN/yolox-train-custom-dataset-voc2007/Snipaste_1.png"></p>
+<h3 id="1-5-验证"><a href="#1-5-验证" class="headerlink" title="1.5 验证"></a>1.5 验证</h3><blockquote>
+<p><a href="https://yolox.readthedocs.io/en/latest/quick_run.html" title="Get Started">官方文档 - Get Started</a></p>
+</blockquote>
+<p>根据官方文档说明，需要先下载 YOLOX 预训练好的权重文件，这里以 <code>yolox_s.pth</code> 为例：</p>
+<p><a href="https://github.com/Megvii-BaseDetection/YOLOX?tab=readme-ov-file#benchmark" title="[前往下载页面]">[前往下载页面]</a></p>
+<p><img src="/blog/images/posts/zh-CN/yolox-train-custom-dataset-voc2007/Snipaste_2.png"></p>
+<p>可以将权重文件下载到任意目录，但为了方便，我们选择下载到 YOLOX 的 weights&#x2F; 目录，因此需要创建 weights&#x2F; 目录。</p>
+<p>然后在根目录下运行：</p>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line"><span class="comment"># PowerShell</span></span><br><span class="line"></span><br><span class="line">python tools/demo.py image `</span><br><span class="line">  <span class="literal">-n</span> yolox<span class="literal">-s</span> `</span><br><span class="line">  <span class="literal">-c</span> /path/to/your/yolox_s.pth `</span><br><span class="line">  <span class="literal">--path</span> assets/dog.jpg `</span><br><span class="line">  <span class="literal">--conf</span> <span class="number">0.25</span> `</span><br><span class="line">  <span class="literal">--nms</span> <span class="number">0.45</span> `</span><br><span class="line">  <span class="literal">--tsize</span> <span class="number">640</span> `</span><br><span class="line">  <span class="literal">--save_result</span> `</span><br><span class="line">  <span class="literal">--device</span> [<span class="type">cpu</span>/<span class="type">gpu</span>]</span><br></pre></td></tr></table></figure>
+
+<p>这里选择了图片 <code>assets/dog.jpg</code>：</p>
+<p><img src="/blog/images/posts/zh-CN/yolox-train-custom-dataset-voc2007/Snipaste_3.png"></p>
+<p>如果一切正常，那么将会在产生一个新的目录 <code>YOLOX_outputs/</code>，其中的子目录 <code>vis_res/</code> 中的图片是对 <code>assets/dog.jpg</code> 的预测结果图片：</p>
+<p><img src="/blog/images/posts/zh-CN/yolox-train-custom-dataset-voc2007/Snipaste_4.png"></p>
+<h2 id="二、按需修改-YOLOX-源代码"><a href="#二、按需修改-YOLOX-源代码" class="headerlink" title="二、按需修改 YOLOX 源代码"></a>二、按需修改 YOLOX 源代码</h2><h3 id="2-1-yolox-x2F-data-x2F-datasets-x2F-voc-py"><a href="#2-1-yolox-x2F-data-x2F-datasets-x2F-voc-py" class="headerlink" title="2.1 yolox&#x2F;data&#x2F;datasets&#x2F;voc.py"></a>2.1 yolox&#x2F;data&#x2F;datasets&#x2F;voc.py</h3><ul>
+<li>第一处<br>大约在138行，将 <code>/</code> 修改为 <code>\\</code>。<br>否则会报错超出索引边界。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 修改前</span></span><br><span class="line">path_filename = [</span><br><span class="line">    (self._imgpath % self.ids[i]).split(self.root + <span class="string">&quot;/&quot;</span>)[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(self.num_imgs)</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改后</span></span><br><span class="line">path_filename = [</span><br><span class="line">    (self._imgpath % self.ids[i]).split(self.root + <span class="string">&quot;\\&quot;</span>)[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(self.num_imgs)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第二处<br>大约在264行，将 <code>if dets == []</code> 改为 <code>if dets.size == 0</code>。<br>否则报错。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 修改前</span></span><br><span class="line"><span class="keyword">if</span> dets == []:</span><br><span class="line">    <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改后</span></span><br><span class="line"><span class="keyword">if</span> dets.size == <span class="number">0</span>:</span><br><span class="line">    <span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第三处<br>大约在281行，将 <code>&quot;&#123;:s&#125;.xml&quot;</code> 改为 <code>&quot;&#123;&#125;.xml&quot;</code>。<br>否则路径拼接错误。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 修改前</span></span><br><span class="line">annopath = os.path.join(rootpath, <span class="string">&quot;Annotations&quot;</span>, <span class="string">&quot;&#123;:s&#125;.xml&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改后</span></span><br><span class="line">annopath = os.path.join(rootpath, <span class="string">&quot;Annotations&quot;</span>, <span class="string">&quot;&#123;&#125;.xml&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-yolox-x2F-data-x2F-datasets-x2F-voc-classes-py"><a href="#2-2-yolox-x2F-data-x2F-datasets-x2F-voc-classes-py" class="headerlink" title="2.2 yolox&#x2F;data&#x2F;datasets&#x2F;voc_classes.py"></a>2.2 yolox&#x2F;data&#x2F;datasets&#x2F;voc_classes.py</h3><p>将 <code>VOC_CLASSES</code> 更改为自定义数据集中的实际类别。</p>
+<h3 id="2-3-exps-x2F-example-x2F-yolox-voc-x2F-yolox-voc-s-py"><a href="#2-3-exps-x2F-example-x2F-yolox-voc-x2F-yolox-voc-s-py" class="headerlink" title="2.3 exps&#x2F;example&#x2F;yolox_voc&#x2F;yolox_voc_s.py"></a>2.3 exps&#x2F;example&#x2F;yolox_voc&#x2F;yolox_voc_s.py</h3><ul>
+<li><p>第一处<br>将 <code>self.num_classes = 20</code> 修改为实际的类别数量。</p>
+</li>
+<li><p>第二处<br>由于我们的数据集只有 VOC2007，因此修改 <code>get_dataset</code> 函数。</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 修改前</span></span><br><span class="line">image_sets=[(<span class="string">&#x27;2007&#x27;</span>, <span class="string">&#x27;trainval&#x27;</span>), (<span class="string">&#x27;2012&#x27;</span>, <span class="string">&#x27;trainval&#x27;</span>)],</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改后</span></span><br><span class="line">image_sets=[(<span class="string">&#x27;2007&#x27;</span>, <span class="string">&#x27;trainval&#x27;</span>)],</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-tools-x2F-demo-py"><a href="#2-4-tools-x2F-demo-py" class="headerlink" title="2.4 tools&#x2F;demo.py"></a>2.4 tools&#x2F;demo.py</h3><p>由于我们的数据集是 VOC2007，因此修改</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 修改前</span></span><br><span class="line"><span class="keyword">from</span> yolox.data.datasets <span class="keyword">import</span> COCO_CLASSES</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改后</span></span><br><span class="line"><span class="keyword">from</span> yolox.data.datasets.voc_classes <span class="keyword">import</span> VOC_CLASSES</span><br></pre></td></tr></table></figure>
+
+<p>同时将本文件中使用了 <code>COCO_CLASSES</code> 的其他代码改为 <code>VOC_CLASSES</code>。</p>
+<h2 id="三、制作-VOC2007-数据集"><a href="#三、制作-VOC2007-数据集" class="headerlink" title="三、制作 VOC2007 数据集"></a>三、制作 VOC2007 数据集</h2><p>VOC2007 数据集的官方示例数据如下：</p>
+<ul>
+<li><a href="http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar" title="VOCtrainval_06-Nov-2007.tar">训练和验证数据集 - VOCtrainval_06-Nov-2007.tar</a></li>
+<li><a href="http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar" title="VOCtest_06-Nov-2007.tar">测试数据集 - VOCtest_06-Nov-2007.tar</a></li>
+</ul>
+<p>其内部数据目录结构如下：</p>
+<p><img src="/blog/images/posts/zh-CN/yolox-train-custom-dataset-voc2007/Snipaste_5.png"></p>
+<h3 id="2-1-数据标注"><a href="#2-1-数据标注" class="headerlink" title="2.1 数据标注"></a>2.1 数据标注</h3><p>标注工具有：labelImg，labelMe 等，本文使用的是 <a href="https://github.com/HumanSignal/labelImg" title="labelImg">labelImg</a>。<br>具体用法，参考其官方文档。</p>
+<h3 id="2-2-创建数据集目录"><a href="#2-2-创建数据集目录" class="headerlink" title="2.2 创建数据集目录"></a>2.2 创建数据集目录</h3><p>首先在 YOLOX 源代码 datasets&#x2F; 目录中创建上图中的文件结构。<br>接下来：</p>
+<ul>
+<li>将图片放入 JPEGImages 目录</li>
+<li>将标注放入 Annotations 目录</li>
+</ul>
+<h3 id="2-3-划分数据集"><a href="#2-3-划分数据集" class="headerlink" title="2.3 划分数据集"></a>2.3 划分数据集</h3><p>图片数据集需要被划分为”训练和验证集“、”测试集“。</p>
+<p>分别对应 ImageSets 目录：</p>
+<ul>
+<li>训练集：train.txt</li>
+<li>验证集：val.txt</li>
+<li>训练和验证集：trainval.txt</li>
+<li>测试集：test.txt</li>
+</ul>
+<p>VOC2007 的官方示例数据集的划分：</p>
+<blockquote>
+<p>The data has been split into 50% for training&#x2F;validation and 50% for testing. The distributions of images and objects by class are approximately equal across the training&#x2F;validation and test sets. In total there are 9,963 images, containing 24,640 annotated objects.</p>
+</blockquote>
+<blockquote>
+<p>数据已分为 50% 用于训练&#x2F;验证，50% 用于测试。 在训练&#x2F;验证和测试集中，按类别划分的图像和对象的分布大致相等。 总共有 9,963 张图像，包含 24,640 个带注释的对象。 </p>
+</blockquote>
+<p>但也可以自由设置划分比例，因为需要自行编写代码来划分。</p>
+<p>划分数据集可以自行编写代码来实现，也可以借助现有库来实现，如<br><code>sklearn</code> 的 <code>sklearn.model_selection.train_test_split</code> 函数。</p>
+<p>以下是用于划分的 Python 代码示例：</p>
+<p>为了便于运行，将示例代码移动到 <code>datasets/voc_split.py</code>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dataset_path</span>(<span class="params">relative_path</span>):</span><br><span class="line">    <span class="keyword">return</span> os.path.abspath(</span><br><span class="line">        os.path.join(os.path.dirname(__file__), os.path.normpath(relative_path))</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">name</span>(<span class="params">filename</span>):</span><br><span class="line">    basename = os.path.basename(filename)</span><br><span class="line">    <span class="keyword">return</span> os.path.splitext(basename)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">split</span>(<span class="params">voc_path, train_ratio=<span class="number">0.5</span>, val_ratio=<span class="number">0.2</span></span>):</span><br><span class="line">    jpeg_images_folder = os.path.join(voc_path, <span class="string">&quot;JPEGImages&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 博客检测到下面这行代码有敏感词，请自行修正下面这行代码。</span></span><br><span class="line">    jpeg_images_files = os.listdr(jpeg_images_folder) </span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取文件名</span></span><br><span class="line">    names = [os.path.splitext(file)[<span class="number">0</span>] <span class="keyword">for</span> file <span class="keyword">in</span> jpeg_images_files]</span><br><span class="line">    num = <span class="built_in">len</span>(names)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 随机打乱文件列表</span></span><br><span class="line">    random.shuffle(names)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 计算划分的索引位置</span></span><br><span class="line">    train_split = <span class="built_in">int</span>(train_ratio * num)</span><br><span class="line">    val_split = <span class="built_in">int</span>((train_ratio + val_ratio) * num)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 获取划分后的文件列表</span></span><br><span class="line">    train = <span class="built_in">sorted</span>(names[:train_split])</span><br><span class="line">    val = <span class="built_in">sorted</span>(names[train_split:val_split])</span><br><span class="line">    test = <span class="built_in">sorted</span>(names[val_split:])</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="string">&quot;train&quot;</span>: train, <span class="string">&quot;val&quot;</span>: val, <span class="string">&quot;test&quot;</span>: test,  <span class="string">&quot;trainval&quot;</span>: train + val &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write</span>(<span class="params"><span class="built_in">dict</span>, voc_path</span>):</span><br><span class="line">    image_sets_folder = os.path.join(voc_path, <span class="string">&quot;ImageSets&quot;</span>, <span class="string">&quot;Main&quot;</span>)</span><br><span class="line">    os.makedirs(image_sets_folder, exist_ok=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">for</span> filname, names <span class="keyword">in</span> <span class="built_in">dict</span>.items():</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(image_sets_folder, filname + <span class="string">&quot;.txt&quot;</span>), <span class="string">&quot;w&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">for</span> name <span class="keyword">in</span> names:</span><br><span class="line">                f.write(name + <span class="string">&quot;\n&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    voc_path = dataset_path(<span class="string">&quot;VOCdevkit/VOC2007&quot;</span>)</span><br><span class="line">    <span class="built_in">dict</span> = split(voc_path, <span class="number">0.5</span>, <span class="number">0.2</span>)</span><br><span class="line">    write(<span class="built_in">dict</span>, voc_path)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Done&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在终端运行：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">python datasets/voc_split.py</span><br></pre></td></tr></table></figure>
+<p>即可将同目录下的 VOC 数据集按照给定比例划分。</p>
+<h2 id="四、训练"><a href="#四、训练" class="headerlink" title="四、训练"></a>四、训练</h2><p>在终端运行下面的命令，开始训练：</p>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line"><span class="comment"># PowerShell</span></span><br><span class="line"></span><br><span class="line">python tools/train.py `</span><br><span class="line">    <span class="literal">--exp_file</span> exps/example/yolox_voc/yolox_voc_s.py `</span><br><span class="line">    <span class="literal">--devices</span> <span class="number">1</span> `</span><br><span class="line">    <span class="literal">--batch-size</span> <span class="number">8</span> `</span><br><span class="line">    <span class="literal">--fp16</span> `</span><br><span class="line">    <span class="literal">--occupy</span> `</span><br><span class="line">    <span class="literal">--ckpt</span> weights/yolox_s.pth</span><br></pre></td></tr></table></figure>
+
+<p>最终会在 <code>YOLOX_outputs/yolox_voc_s/</code> 目录下输出权重文件，<br>一般会选择 <code>best_ckpt.pth</code> 作为训练结果。</p>
+<p><em>tools&#x2F;train.py 各参数的具体含义，在 <code>tool/train.py</code> 中有声明。</em></p>
+<h2 id="五、预测"><a href="#五、预测" class="headerlink" title="五、预测"></a>五、预测</h2><p>在终端运行下面的命令，开始预测：</p>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line"><span class="comment"># PowerShell</span></span><br><span class="line"></span><br><span class="line">python tools/demo.py image `</span><br><span class="line">    <span class="literal">--exp_file</span> exps/example/yolox_voc/yolox_voc_s.py `</span><br><span class="line">    <span class="literal">--ckpt</span> YOLOX_outputs/yolox_voc_s/best_ckpt.pth `</span><br><span class="line">    <span class="literal">--path</span> datasets/VOCdevkit/VOC2007/JPEGImages `</span><br><span class="line">    <span class="literal">--conf</span> <span class="number">0.3</span> `</span><br><span class="line">    <span class="literal">--nms</span> <span class="number">0.3</span> `</span><br><span class="line">    <span class="literal">--save_result</span> `</span><br><span class="line">    <span class="literal">--device</span> cpu</span><br></pre></td></tr></table></figure>
+
+<p>参数 <code>--path</code> 表示我们要预测整个 <code>datasets/VOCdevkit/VOC2007/JPEGImages</code> 目录中的图片。</p>
+<p>如果一切正常，那么将会在 <code>YOLOX_outputs/</code> 的子目录 <code>vis_res/</code> 中输出预测结果图片。</p>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><h3 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">IndexError: list index out of range</span><br></pre></td></tr></table></figure>
+<p>参考： 2.1 yolox&#x2F;data&#x2F;datasets&#x2F;voc.py 第一处</p>
+<h3 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ValueError: operands could not be broadcast together with shapes (6,5) (0,)</span><br></pre></td></tr></table></figure>
+<p>参考： 2.1 yolox&#x2F;data&#x2F;datasets&#x2F;voc.py 第二处</p>
+]]></content>
+      <categories>
+        <category>AI</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>YOLOX</tag>
+        <tag>Computer Vision</tag>
+        <tag>Deep Learning</tag>
+        <tag>Object Detection</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>AspNetCore Authentication 是如何将 Scheme 和 Options 关联的？</title>
+    <url>/blog/zh-CN/how-aspnetcore-authentication-associates-scheme-and-options/</url>
+    <content><![CDATA[<p>AspNetCore Authentication 是如何将 Scheme 和 Options 关联的？</p>
+<span id="more"></span>
+<p>当我们调用 <code>AddAuthentication()</code> 时，将返回 <code>AuthenticationBuilder</code>，之后我们通过调用它的 <code>AddScheme()</code> 进行注册，</p>
+<p>在它的内部会调用一个方法 <code>AddSchemeHelper</code>，而这个方法将 <code>Scheme</code> 配置到了 <code>AuthenticationOptions</code> 的私有字段 <code>IList&lt;AuthenticationSchemeBuilder&gt; _schemes</code> 当中；</p>
+<p>之后在 <code>AuthenticationHandler</code> 的 <code>InitializeAsync</code> 方法中通过 <code>OptionsMonitor.Get( scheme )</code> 取得对应的选项实例，并赋值给属性<code>Options</code></p>
+<p>由于每个认证处理类都是继承自<code>AuthenticationHandler</code>，因此将始终获得与<code>Scheme</code>相关联的<code>Options</code>实例。</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="comment">// AuthenticatioinHandler.cs</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">async</span> Task <span class="title">InitializeAsync</span>(<span class="params">AuthenticationScheme scheme, HttpContext context</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (scheme == <span class="literal">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(<span class="keyword">nameof</span>(scheme));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (context == <span class="literal">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentNullException(<span class="keyword">nameof</span>(context));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            Scheme = scheme;</span><br><span class="line">            Context = context;</span><br><span class="line"></span><br><span class="line">            Options = OptionsMonitor.Get(Scheme.Name); <span class="comment">// Here.</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">await</span> InitializeEventsAsync();</span><br><span class="line">            <span class="keyword">await</span> InitializeHandlerAsync();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>认证核心类：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="comment">// class</span></span><br><span class="line"></span><br><span class="line">AuthenticationOptions</span><br><span class="line">AuthenticationBuilder</span><br><span class="line"></span><br><span class="line">AuthenticationScheme</span><br><span class="line">AuthenticationSchemeBuilder</span><br><span class="line">AuthenticationSchemeProvider</span><br><span class="line"></span><br><span class="line">AuthenticationHandler</span><br><span class="line">AuthenticationHandlerProvider</span><br><span class="line"></span><br><span class="line">AuthenticationMiddleware</span><br><span class="line"></span><br><span class="line">AuthenticationService</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>ASP.NET Core</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>React 如何区分 Class 和 Function？</title>
+    <url>/blog/zh-CN/how-react-differentiates-class-and-function-components/</url>
+    <content><![CDATA[<p>React 如何区分 Class 和 Function？</p>
+<span id="more"></span>
+<h2 id="原文地址"><a href="#原文地址" class="headerlink" title="# 原文地址"></a># 原文地址</h2><blockquote>
+<p><a href="https://overreacted.io/how-does-react-tell-a-class-from-a-function/" title="React 如何区分 Class 和 Function？">How Does React Tell a Class from a Function?</a></p>
+</blockquote>
+<h2 id="扩展知识"><a href="#扩展知识" class="headerlink" title="扩展知识"></a>扩展知识</h2><blockquote>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new" title="new 运算符 | MDN">new 运算符 | MDN</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new.target" title="new.target | MDN">new.target | MDN</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>React</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>IIS 80 端口提示 503 错误，但端口未被占用</title>
+    <url>/blog/zh-CN/iis-503-error-port-80-not-occupied/</url>
+    <content><![CDATA[<p>IIS 80 端口提示 503 错误，但端口未被占用</p>
+<span id="more"></span>
+<h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>通过 <code>netstat -ano | findstr :80</code> 发现除了 IIS 默认站点，没有其他应用程序占用了 80 端口。<br>经过一整天的排查，终于在下午从 StackOverflow 上找到了答案。</p>
+<h2 id="StackOverflow-问题地址："><a href="#StackOverflow-问题地址：" class="headerlink" title="StackOverflow 问题地址："></a>StackOverflow 问题地址：</h2><p><a href="https://stackoverflow.com/questions/28302930/http-error-503-the-service-is-unavailable-when-port-80-is-already-free">https://stackoverflow.com/questions/28302930/http-error-503-the-service-is-unavailable-when-port-80-is-already-free</a></p>
+<h2 id="MSDN-503服务不可用的不太常见的根本原因："><a href="#MSDN-503服务不可用的不太常见的根本原因：" class="headerlink" title="MSDN 503服务不可用的不太常见的根本原因："></a>MSDN 503服务不可用的不太常见的根本原因：</h2><p><a href="https://docs.microsoft.com/zh-cn/archive/blogs/webtopics/a-not-so-common-root-cause-for-503-service-unavailable">https://docs.microsoft.com/zh-cn/archive/blogs/webtopics/a-not-so-common-root-cause-for-503-service-unavailable</a></p>
+<h2 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h2><p>使用命令 <code>netsh http show urlacl</code> 查询所有被保留的 URL。</p>
+<p>大概如下图所示：</p>
+<p><img src="/blog/images/posts/zh-CN/iis-503-error-port-80-not-occupied/Snipaste_1.png"></p>
+<p>从图上可看出，<code>http://localhost:80/</code> 和 <code>https://localhost:443/</code> 这两个地址都被保留了，所以我们在 IIS 中绑定 80 端口才会报错 503。</p>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>使用命令 <code>netsh http delete urlacl &lt;保留的URL&gt;</code> 删掉被保留的 URL即可。</p>
 ]]></content>
       <tags>
-        <tag>Webpack</tag>
+        <tag>IIS</tag>
+        <tag>Troubleshooting</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>无法在 Web 服务器上启动调试。未能加载配置文件。</title>
+    <url>/blog/zh-CN/unable-to-start-debugging-web-server-config-file-failed/</url>
+    <content><![CDATA[<p>在使用 Visual Studio 2017 社区版时，发现调试 ASP.NET 时提示 <code>无法在 Web 服务器上启动调试。未能加载配置文件。</code> 错误，也就是不能调试。<br>经实验发现，更换 Visual Studio 2017 为企业版可解决。</p>
+]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>ASP.NET</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>IIS WCF 404</title>
+    <url>/blog/zh-CN/iis-wcf-404/</url>
+    <content><![CDATA[<p>传统 ASP.NET 项目使用了 WCF，也部署到 IIS 上了，但是 Web 项目访问 WCF 服务时，IIS 返回了 404 错误。<br>经排查发现，是 Windows 功能没有开启正确，需要打开 <code>.NET Frameword 4.8 高级服务 &gt; WCF 服务 &gt; HTTP 激活</code>。</p>
+<p><img src="/blog/images/posts/zh-CN/iis-wcf-404/Snipaste_1.png"></p>
+]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>IIS</tag>
+        <tag>WCF</tag>
+        <tag>Troubleshooting</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>为 IdentityServer4 添加签名证书</title>
+    <url>/blog/zh-CN/add-signing-certificate-to-identityserver4/</url>
+    <content><![CDATA[<p>为 IdentityServer4 添加签名证书</p>
+<span id="more"></span>
+<h1 id="如何生成-IdentityServer4-签名证书？"><a href="#如何生成-IdentityServer4-签名证书？" class="headerlink" title="如何生成 IdentityServer4 签名证书？"></a>如何生成 IdentityServer4 签名证书？</h1><p>需要安装 OpenSSL</p>
+<ol>
+<li>申请一个私钥</li>
+</ol>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">openssl genrsa <span class="literal">-out</span> &lt;私钥名称&gt;.key <span class="number">2048</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>申请一个公钥</li>
+</ol>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">openssl req <span class="literal">-new</span> <span class="literal">-x509</span> <span class="literal">-key</span> &lt;私钥名称&gt;.key <span class="literal">-days</span> <span class="number">3650</span> <span class="literal">-out</span> &lt;公钥名称&gt;.crt</span><br></pre></td></tr></table></figure>
+
+<p>会提示输入一些信息，用于颁发机构的信息展示，如公司，所在国家，城市等。</p>
+<ol start="3">
+<li>公钥和私钥的提取加密</li>
+</ol>
+<p>由于传播安全方面的考虑，需要将公钥和私钥进行加密，<br>微软支持 PCK12（公钥加密技术 12 号标准：Public Key Cryptography Standards #12），<br>PCK12 将公钥和私钥合在一个 .pfx 后缀的文件中，并用密码保护，<br>如要提取公钥和私钥，需要密码确认。</p>
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">openssl pkcs12 <span class="literal">-export</span> <span class="operator">-in</span> &lt;公钥名称&gt;.crt <span class="literal">-inkey</span> &lt;私钥名称&gt;.key <span class="literal">-out</span> &lt;证书名称&gt;.pfx</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>使用证书</li>
+</ol>
+<p>将生成的 .pfx 文件复制到项目的目录中，并在配置文件 <code>appsettings.json</code> 里填好路径和密码</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;Certificates&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">   <span class="attr">&quot;CertPath&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Certificates/&lt;证书名称&gt;.pfx&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;Password&quot;</span><span class="punctuation">:</span> <span class="string">&quot;证书密码&quot;</span></span><br><span class="line"> <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>最后在程序里加载这个证书</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (Environment.IsDevelopment())</span><br><span class="line">&#123;</span><br><span class="line">    builder.AddDeveloperSigningCredential();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">    builder.AddSigningCredential(<span class="keyword">new</span> X509Certificate2(Path.Combine(Environment.ContentRootPath,</span><br><span class="line">        Configuration[<span class="string">&quot;Certificates:CertPath&quot;</span>]),</span><br><span class="line">        Configuration[<span class="string">&quot;Certificates:Password&quot;</span>]));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果想调试环境也统一证书，可以把环境判断去掉，只用 <code>AddSigningCredential</code> 方式加载密钥证书。</p>
+]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>ASP.NET Core</tag>
+        <tag>IdentityServer4</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ASP.NET Core Web API SwaggerUI 集成 IdentityServer4 OAuth 授权</title>
+    <url>/blog/zh-CN/aspnetcore-web-api-swaggerui-integrate-identityserver4-oauth/</url>
+    <content><![CDATA[<p>ASP.NET Core Web API SwaggerUI 集成 IdentityServer4 OAuth 授权</p>
+<span id="more"></span>
+<h1 id="创建-IdentityServer-项目"><a href="#创建-IdentityServer-项目" class="headerlink" title="创建 IdentityServer 项目"></a>创建 IdentityServer 项目</h1><p>配置 <code>Startup.cs</code></p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 这是添加 MVC 和 视图，因为我们需要使用 QuickStart.UI</span></span><br><span class="line">    services.AddControllersWithViews();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 这只是允许 IdentityServer4 输出一些事件日志</span></span><br><span class="line">    services.AddIdentityServer(options =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        options.Events.RaiseInformationEvents = <span class="literal">true</span>;</span><br><span class="line">        options.Events.RaiseErrorEvents = <span class="literal">true</span>;</span><br><span class="line">        options.Events.RaiseSuccessEvents = <span class="literal">true</span>;</span><br><span class="line">        options.Events.RaiseFailureEvents = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">        options.Authentication.CheckSessionCookieSameSiteMode = SameSiteMode.Lax;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 如果在客户端跳转登录时，出现无法回到客户端页面时，多半是 Cookie 的 SameSiteMode 导致的</span></span><br><span class="line">        <span class="comment">// 添加下面这一行可以解决</span></span><br><span class="line">        options.Authentication.CookieSameSiteMode = SameSiteMode.Lax;</span><br><span class="line">    &#125;)</span><br><span class="line">        <span class="comment">// 添加用于开发环境的 JWT 签名密钥</span></span><br><span class="line">        .AddDeveloperSigningCredential()</span><br><span class="line">        <span class="comment">// 这是在内存中配置一些资源，方便测试</span></span><br><span class="line">        .AddInMemoryIdentityResources(Config.IdentityResources)</span><br><span class="line">        .AddInMemoryApiResources(Config.ApiResources)</span><br><span class="line">        .AddInMemoryApiScopes(Config.ApiScopes)</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 这是添加的测试客户端</span></span><br><span class="line">        .AddInMemoryClients(Config.Clients)</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 这是添加的测试用户</span></span><br><span class="line">        .AddTestUsers(TestUsers.Users);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Configure</span>(<span class="params">IApplicationBuilder app</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 因为是 MVC 所以需要静态文件</span></span><br><span class="line">    app.UseStaticFiles();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 这是启用路由中间件</span></span><br><span class="line">    app.UseRouting();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 这是启用 IdentityServer 的认证中间件</span></span><br><span class="line">    app.UseIdentityServer();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 这是启用授权中间件，便于使用 [Authorize]</span></span><br><span class="line">    app.UseAuthorization();</span><br><span class="line"></span><br><span class="line">    app.UseEndpoints(endpoints =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 这是 MVC 的默认路由</span></span><br><span class="line">        endpoints.MapDefaultControllerRoute();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>配置 <code>Config.cs</code></p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">Config</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> List&lt;IdentityResource&gt; IdentityResources =&gt; <span class="keyword">new</span>()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">new</span> IdentityResources.OpenId(),</span><br><span class="line">        <span class="keyword">new</span> IdentityResources.Profile(),</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> List&lt;ApiResource&gt; ApiResources =&gt; <span class="keyword">new</span>()</span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> List&lt;ApiScope&gt; ApiScopes =&gt; <span class="keyword">new</span>()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">new</span> ApiScope(<span class="string">&quot;webapi&quot;</span>)</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> List&lt;Client&gt; Clients =&gt; <span class="keyword">new</span>()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 这个就是 SwaggerUI 的 Client，使用的 OAuth 授权码模式 </span></span><br><span class="line">        <span class="keyword">new</span> Client()</span><br><span class="line">        &#123;</span><br><span class="line">            ClientName = <span class="string">&quot;Swagger UI&quot;</span>,</span><br><span class="line">            ClientId = <span class="string">&quot;swagger&quot;</span>,</span><br><span class="line">            ClientSecrets =</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">new</span> Secret(<span class="string">&quot;swagger&quot;</span>.Sha256())</span><br><span class="line">            &#125;,</span><br><span class="line">            AllowedGrantTypes = GrantTypes.Code,</span><br><span class="line">            <span class="comment">//AllowAccessTokensViaBrowser = true,</span></span><br><span class="line">            RequirePkce = <span class="literal">true</span>,</span><br><span class="line">            RequireConsent = <span class="literal">true</span>,</span><br><span class="line">            RedirectUris =</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;http://localhost:5000/swagger/oauth2-redirect.html&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            AllowedCorsOrigins =</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;http://localhost:5000&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            AllowedScopes =</span><br><span class="line">            &#123;</span><br><span class="line">                IdentityServerConstants.StandardScopes.OpenId,</span><br><span class="line">                IdentityServerConstants.StandardScopes.Profile,</span><br><span class="line">                <span class="string">&quot;webapi&quot;</span> <span class="comment">// 这是我们的 WebApi 的 Scope</span></span><br><span class="line">            &#125;,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="创建-WebAPI-项目"><a href="#创建-WebAPI-项目" class="headerlink" title="创建 WebAPI 项目"></a>创建 WebAPI 项目</h1><p>配置 <code>Startup.cs</code></p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">services.AddAuthentication(<span class="string">&quot;Bearer&quot;</span>) <span class="comment">// 这是设置默认的认证方案</span></span><br><span class="line">    <span class="comment">// 这是添加一个名称为 &quot;Bearer&quot; 的 JWT 认证方案</span></span><br><span class="line">    .AddJwtBearer(<span class="string">&quot;Bearer&quot;</span>, options =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 远程认证的地址，即 IdentityServer 项目的地址</span></span><br><span class="line">        options.Authority = authority;</span><br><span class="line">		</span><br><span class="line">        <span class="comment">// 这是为了避免因未使用 HTTPS 协议的情况下可能导致的一些错误</span></span><br><span class="line">        options.RequireHttpsMetadata = <span class="literal">false</span>;</span><br><span class="line">		</span><br><span class="line">        <span class="comment">// 这是配置 JWT 的验证参数</span></span><br><span class="line">        options.TokenValidationParameters = <span class="keyword">new</span> TokenValidationParameters</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 不验证 JWT 的受众，即不验证 JWT 中的 aud 属性</span></span><br><span class="line">            ValidateAudience = <span class="literal">false</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>最后在 Controller 的 Action 打上 <code>[Authorize]</code> 即可</p>
+<h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><ol>
+<li>为什么 ApiController 加了 <code>[Authorize]</code>，但 SwaggerUI 中的 Action 最右边没有 一把锁 的图标？<br>答：因为 <code>[Authorize]</code> 必须加在 ApiController 的 Action 方法上，才能在 SwaggerUI 中展示锁图标（坑）。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>ASP.NET Core</tag>
+        <tag>IdentityServer4</tag>
+        <tag>Swagger</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PowerShell 异常处理</title>
+    <url>/blog/zh-CN/powershell-error-handling/</url>
+    <content><![CDATA[<p>PowerShell 中的异常处理</p>
+<span id="more"></span>
+<h1 id="PowerShell-的异常种类"><a href="#PowerShell-的异常种类" class="headerlink" title="PowerShell 的异常种类"></a>PowerShell 的异常种类</h1><h2 id="终止型错误-Terminating-Error"><a href="#终止型错误-Terminating-Error" class="headerlink" title="终止型错误 Terminating Error"></a>终止型错误 Terminating Error</h2><p>此类错误可以被 <code>try &#123; &#125; catch &#123; &#125;</code> 语句捕获到，并可以从 <code>$PSItem</code> 对象取得错误信息，类似编程语言的 <code>Exception</code>。</p>
+<h2 id="非终止型错误-Non-Terminating-Error"><a href="#非终止型错误-Non-Terminating-Error" class="headerlink" title="非终止型错误 Non-Terminating Error"></a>非终止型错误 Non-Terminating Error</h2><p>此类错误不能被  <code>try &#123; &#125; catch &#123; &#125;</code> 语句捕获到，因为它将错误信息输出到了终端的 <strong>标准输出</strong>，具体表现就是在终端里会看见一段错误文本。</p>
+<h3 id="ErrorAction"><a href="#ErrorAction" class="headerlink" title="-ErrorAction"></a>-ErrorAction</h3><p>这个选项是用于改变<strong>非终止型错误</strong>的行为的，默认是<code>Continue</code>，表示出错时，继续执行后续的命令，它的值有以下几种：</p>
+<ul>
+<li><code>Continue</code> : 显示错误信息并继续执行后面的命令，这是默认值。</li>
+<li><code>Ignore</code> :  这个值是在 PowerShell 3.0 引入的。它不显示错误信息并继续执行后面的命令。与 <code>SilentlyContinue</code> 不同的是，它也不会把错误信息添加到 <code>$Error</code> 变量中。</li>
+<li><code>Inquire</code> : 显示错误信息并弹框与用户交互。</li>
+<li><code>SilentlyContinue</code> : 不显示错误信息并继续执行后面的命令。</li>
+<li><code>Stop</code> : 显示错误信息并且退出脚本的执行。</li>
+<li><code>Suspend</code> : 这个值只适用于 workflow。当 terminating error 发生时执行会暂停下来，然后决定是否恢复执行。</li>
+</ul>
+<h3 id="ErrorActionPreference"><a href="#ErrorActionPreference" class="headerlink" title="$ErrorActionPreference"></a>$ErrorActionPreference</h3><p>这个环境变量是 <code>-ErrorAction</code> 的全局设置</p>
+<h1 id="如何判断脚本或者命令出错了？"><a href="#如何判断脚本或者命令出错了？" class="headerlink" title="如何判断脚本或者命令出错了？"></a>如何判断脚本或者命令出错了？</h1><h2 id="处理终止型错误-Terminating-Error"><a href="#处理终止型错误-Terminating-Error" class="headerlink" title="处理终止型错误 Terminating Error"></a>处理终止型错误 Terminating Error</h2><p>可以通过 <code>try &#123;&#125; catch &#123;&#125;</code> 捕获，并通过 <code>Exit</code> 方法中断脚本执行，如 <code>Exit 1</code> （脚本成功执行返回值是 0）</p>
+<h2 id="处理非终止型错误-Non-Terminating-Error"><a href="#处理非终止型错误-Non-Terminating-Error" class="headerlink" title="处理非终止型错误 Non-Terminating Error"></a>处理非终止型错误 Non-Terminating Error</h2><p>第一种：通过更改 <code>-ErrorAction</code> 或 <code>$ErrorActionPreference</code> 为 <code>Stop</code> 来自动中断执行</p>
+<p>第二种：通过判断 <code>$?</code> 的值为 <code>True</code> 还是 <code>False</code> 来处理</p>
+<h1 id="需要错误处理的常见场景"><a href="#需要错误处理的常见场景" class="headerlink" title="需要错误处理的常见场景"></a>需要错误处理的常见场景</h1><ul>
+<li>CI 管道执行时，命令失败了，但是管道却成功了，所以我们需要对出错的命令进行异常处理，从而时管道终止</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>PowerShell</tag>
+        <tag>Troubleshooting</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Dapr 本地部署 ASP.NET Core 踩坑记录</title>
+    <url>/blog/zh-CN/dapr-local-deployment-aspnetcore-troubleshooting/</url>
+    <content><![CDATA[<h1 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h1><p>同一台 Linux 服务器，使用 Dapr 部署两个 ASP.NET Core Web API 程序</p>
+<h1 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h1><h2 id="总有-1-个程序报错-grpc-连接被拒绝"><a href="#总有-1-个程序报错-grpc-连接被拒绝" class="headerlink" title="总有 1 个程序报错 grpc 连接被拒绝"></a>总有 1 个程序报错 grpc 连接被拒绝</h2><p>发现是因为 <code>dapr/components/</code> 目录下的密钥存储配置文件 <code>secretstore.yml</code> 有错</p>
+]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>ASP.NET Core</tag>
+        <tag>Troubleshooting</tag>
+        <tag>Dapr</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>UseRepsponseCaching()  必需在 UseCors() 之后调用</title>
+    <url>/blog/zh-CN/useresponsecaching-must-be-called-after-usecors/</url>
+    <content><![CDATA[<p>&#96;&#96;UseRepsponseCaching()<code>必需在</code>UseCors()&#96; 之后调用</p>
+<span id="more"></span>
+<p>今天在使用 Dapr 的过程中，发现 Dapr 一直报错无法获取应用的订阅信息，也就是 <code>[Topic]</code> 定义的事件订阅，<br><code>/dpar/subscribe</code> 这个端点返回了 200，但是没有 JSON 数据，<br>搞了一上午没搞明白到底哪里有问题，<br>最后怀疑是使用的某个中间件导致了 http 响应无法被输出，<br>挨个排查之后，发现是 <code>UseRepspnseCaching()</code> 和 <code>UseCors()</code>  的顺序写反了，<br>在使用 <code>UseRepspnseCaching()</code> 时，必需先调用 <code>UseCors()</code> 。</p>
+<p><img src="/blog/images/posts/zh-CN/useresponsecaching-must-be-called-after-usecors/Snipaste_1.png"></p>
+<p>在下面的 MSDN 文档里（警告部分）对这个问题有说明</p>
+<blockquote>
+<p><a href="https://docs.microsoft.com/zh-cn/aspnet/core/performance/caching/middleware?view=aspnetcore-5.0#configuration">https://docs.microsoft.com/zh-cn/aspnet/core/performance/caching/middleware?view=aspnetcore-5.0#configuration</a></p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>ASP.NET Core</tag>
+        <tag>Troubleshooting</tag>
+        <tag>Dapr</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DT1001  failed to solve: rpc error: code = Unknown desc = failed to compute cache key: &quot;/nuget.config&quot;</title>
+    <url>/blog/zh-CN/dt1001-failed-to-compute-cache-key-nuget-config/</url>
+    <content><![CDATA[<p>在代码库中存在 <code>NuGet.config</code> 文件时，通过 VisualStudio 为项目添加了 Dockerfile 时，自动添加的 Dockerfile 会把 <code>NuGet.config</code> 变为小写的 <code>nuget.config</code>，由于 Windows 文件系统不区分大小写，Linux 文件系统区分大小写，所以会报错，将 Dockerfile 中的 <code>nuget.config</code> 改为 <code>NuGet.confg</code> 就可以了</p>
+]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>Troubleshooting</tag>
+        <tag>NuGet</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>阿里技术专家详解 DDD 系列</title>
+    <url>/blog/zh-CN/ali-tech-experts-explain-ddd-series/</url>
+    <content><![CDATA[<p>本文记录了知乎 <a href="https://www.zhihu.com/org/a-li-ba-ba-tao-xi-ji-zhu" title="阿里巴巴淘系技术">@阿里巴巴淘系技术</a> 的系列文章（作者殷浩）的目录便于查阅。</p>
+<span id="more"></span>
+<blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/340911587" title="第一讲- Domain Primitive">第一讲 - Domain Primitive</a><br><a href="https://zhuanlan.zhihu.com/p/343388831" title="第二讲 - 应用架构">第二讲 - 应用架构</a><br><a href="https://zhuanlan.zhihu.com/p/348706530" title="第三讲 - Repository模式">第三讲 - Repository模式</a><br><a href="https://zhuanlan.zhihu.com/p/356518017" title="第四讲 - 领域层设计规范">第四讲 - 领域层设计规范</a><br><a href="https://zhuanlan.zhihu.com/p/366395817" title="第五讲 - 聊聊如何避免写流水账代码">第五讲 - 聊聊如何避免写流水账代码</a></p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>Domain-Driven Design</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>IdentityServer4 中使用 ASP.NET Core Identity 的注意事项</title>
+    <url>/blog/zh-CN/using-aspnetcore-identity-in-identityserver4-tips/</url>
+    <content><![CDATA[<p>ASP.NET Core Identity 和 IdentityServer4 都是基于 ASP.NET Core 身份认证系统实现的一个组件，  </p>
+<p>当我们在 IdentityServer4 中集成 ASP.NET Core Identity 这个组件时，会出现一些奇怪的问题，比如看起来已经认证通过，但 WebApi 却返回 404  </p>
+<p>这是由于 Identity 会注册它自己 AuthenticationScheme，而 IdentityServer4 也会注册自己的 Scheme，我们需要在调用 <code>services.AddAuthentication( options=&gt; &#123; &#125; )</code> 中替换掉 Identity 的 Scheme，因为我们真正使用的是 IdentityServer4 的 Scheme。</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">services.AddAuthentication(options =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    options.DefaultAuthenticateScheme = <span class="string">&quot;Bearer&quot;</span>;</span><br><span class="line">    options.DefaultChallengeScheme = <span class="string">&quot;Bearer&quot;</span>;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>必须在 <code>services.AddIdentity&lt;T&gt;()</code> 之后调用 <code>service.AddAuthentication()</code> 才能覆盖。</p>
+]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>ASP.NET Core</tag>
+        <tag>IdentityServer4</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello, World!</title>
+    <url>/blog/zh-CN/hello-world/</url>
+    <content><![CDATA[<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">HelloWorld</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">&quot;Hello, World!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<!-- ![](https://tu.ltyuanfang.cn/api/fengjing.php) -->]]></content>
+  </entry>
+  <entry>
+    <title>OIDC SameSite Secure 问题</title>
+    <url>/blog/zh-CN/oidc-samesite-secure-troubleshooting/</url>
+    <content><![CDATA[<p>OIDC SameSite Secure 问题</p>
+<span id="more"></span>
+<h2 id="OpenIDConnect-报错-“Correlation-failed-”"><a href="#OpenIDConnect-报错-“Correlation-failed-”" class="headerlink" title="OpenIDConnect 报错 “Correlation failed.”"></a>OpenIDConnect 报错 “Correlation failed.”</h2><h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>ASP.NET Core 中使用 OpenIDConnect 连接到 IdentityServer4 ，在登录回调 &#x2F;signin-oidc 时，报错 <code>Correlation failed.</code>。  </p>
+<h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><p>浏览器的 SameSite 安全策略 Secure 导致 Cookie 不能被设置。</p>
+<h3 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h3><p>将 Cookie 的 Secure 属性设置为 True，在 ASP.NET Core 中的代码为：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">services.Configure&lt;CookiePolicyOptions&gt;(options =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    options.Secure = CookieSecurePolicy.Always;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">services.Configure&lt;CookiePolicyOptions&gt;(<span class="string">&quot;命名实例&quot;</span>, options =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    options.Secure = CookieSecurePolicy.Always;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">services.AddAuthentication( options = &gt;</span><br><span class="line">&#123;</span><br><span class="line">    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;  </span><br><span class="line">&#125;)</span><br><span class="line">    .AddCookie( options =&gt; </span><br><span class="line">    &#123;</span><br><span class="line">        options.Secure = CookieSecurePolicy.Always;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+<p>然后一定要记得调用 cookie 策略中间件：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 在 UseAuthentication 或任何其他写入 cookie 的东西之前。</span></span><br><span class="line">app.UseCookiePolicy();</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><a href="https://docs.microsoft.com/zh-cn/aspnet/core/security/samesite?view=aspnetcore-5.0">https://docs.microsoft.com/zh-cn/aspnet/core/security/samesite?view=aspnetcore-5.0</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>ASP.NET Core</tag>
+        <tag>Troubleshooting</tag>
+        <tag>OIDC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>本机建立 Consul 数据中心</title>
+    <url>/blog/zh-CN/create-consul-datacenter-locally/</url>
+    <content><![CDATA[<p>本机建立 Consul 数据中心</p>
+<span id="more"></span>
+<h1 id="本机建立-Consul-数据中心"><a href="#本机建立-Consul-数据中心" class="headerlink" title="本机建立 Consul 数据中心"></a>本机建立 Consul 数据中心</h1><h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>注意：Windows 的路径分隔符是 <code>\</code>，Unix 和 Linux 是 <code>/</code></p>
+<ol>
+<li>Windows10</li>
+<li>consul_1.9.6_windows_amd64</li>
+<li>三个目录模拟3台机器：<ul>
+<li>consul\dc1\server1\</li>
+<li>consul\dc1\server2\</li>
+<li>consul\dc1\server3\</li>
+</ul>
+</li>
+<li>server 目录中的内容：<ul>
+<li>consul\dc1\server1\config\basic.json (配置文件，即 -config-dir)</li>
+<li>consul\dc1\server1\data\ (数据目录，即 -data-dir)</li>
+<li>consul\dc1\server1\consul.exe (Consul 程序文件)</li>
+<li>consul\dc1\server1\bootstrap.ps1 (引导集群的PowerShell脚本，减少手动输入命令)</li>
+<li>consul\dc1\server1\join.ps1 (加入集群的PowerShell脚本，减少手动输入命令)</li>
+<li>consul\dc1\server1\members.ps1 (查看集群中结点信息的PowerShell脚本，减少手动输入命令)</li>
+</ul>
+</li>
+<li>端口表：<ul>
+<li>server1: 10000 + Consul 默认端口，如默认的 8500 会设置为 18500</li>
+<li>server2: 20000 + Consul 默认端口，如默认的 8500 会设置为 28500</li>
+<li>server3: 30000 + Consul 默认端口，如默认的 8500 会设置为 38500</li>
+</ul>
+</li>
+</ol>
+<h2 id="配置文件和脚本内容"><a href="#配置文件和脚本内容" class="headerlink" title="配置文件和脚本内容"></a>配置文件和脚本内容</h2><h2 id="（一）consul-dc1-server1"><a href="#（一）consul-dc1-server1" class="headerlink" title="（一）consul\dc1\server1"></a>（一）consul\dc1\server1</h2><h3 id="1-config-basic-json"><a href="#1-config-basic-json" class="headerlink" title="1) .\config\basic.json"></a>1) .\config\basic.json</h3><figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;datacenter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;dc1&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;node_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;server1&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;bind_addr&quot;</span><span class="punctuation">:</span> <span class="string">&quot;127.0.0.1&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;ports&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;dns&quot;</span><span class="punctuation">:</span> <span class="number">18600</span><span class="punctuation">,</span>        <span class="comment">/*默认：8600*/</span></span><br><span class="line">    <span class="attr">&quot;http&quot;</span><span class="punctuation">:</span> <span class="number">18500</span><span class="punctuation">,</span>       <span class="comment">/*默认：8500*/</span></span><br><span class="line">    <span class="attr">&quot;https&quot;</span><span class="punctuation">:</span> <span class="number">18501</span><span class="punctuation">,</span>      <span class="comment">/*默认：8501，默认是禁用的*/</span></span><br><span class="line">    <span class="attr">&quot;grpc&quot;</span><span class="punctuation">:</span> <span class="number">18502</span><span class="punctuation">,</span>       <span class="comment">/*默认：8502，默认是禁用的*/</span></span><br><span class="line">    <span class="attr">&quot;serf_lan&quot;</span><span class="punctuation">:</span> <span class="number">18301</span><span class="punctuation">,</span>   <span class="comment">/*默认：8301*/</span></span><br><span class="line">    <span class="attr">&quot;serf_wan&quot;</span><span class="punctuation">:</span> <span class="number">18302</span><span class="punctuation">,</span>   <span class="comment">/*默认：8302*/</span></span><br><span class="line">    <span class="attr">&quot;server&quot;</span><span class="punctuation">:</span> <span class="number">18300</span>      <span class="comment">/*默认：8300*/</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;client_addr&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0.0.0.0&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-bootstrap-ps1"><a href="#2-bootstrap-ps1" class="headerlink" title="2) .\bootstrap.ps1"></a>2) .\bootstrap.ps1</h3><figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">.\consul.exe agent <span class="literal">-server</span> <span class="literal">-bootstrap-expect</span> <span class="number">3</span> <span class="literal">-config-dir</span>=<span class="string">&quot;.\config&quot;</span> <span class="literal">-data-dir</span>=<span class="string">&quot;.\data&quot;</span> <span class="literal">-ui</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>-server</strong>: 表示启动的是 Consul 的服务器<br><strong>-bootstrap-expect 3</strong>: 表示集群最少需要 3 台服务器在运行才算有效<br><strong>-config-dir&#x3D;”.\config”</strong>: 表示配置文件的目录为 “.\config”<br><strong>-data-dir&#x3D;”.\data”</strong>: 表示 Consul 的数据存储在 “.\data” 目录中<br><strong>-ui</strong>: 表示启用 Consul 的 Web UI ，通过浏览器访问 <code>http://&lt;ip&gt;:8500/ui</code> 可以看到 Web 界面</p>
+<h3 id="3-join-ps1"><a href="#3-join-ps1" class="headerlink" title="3) .\join.ps1"></a>3) <strong>.\join.ps1</strong></h3><p>我们计划用 server2 和 server3 加入到 server1，所以 server1 不需要 <code>join.ps1</code> 脚本</p>
+<h3 id="4-members-ps1"><a href="#4-members-ps1" class="headerlink" title="4) .\members.ps1"></a>4) .\members.ps1</h3><figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">.\consul.exe members <span class="literal">-http-addr</span>=<span class="string">&quot;127.0.0.1:18500&quot;</span></span><br></pre></td></tr></table></figure>
+<p>命令的意思：查看 server1 所在集群的结点信息，默认只有 server1 自身</p>
+<p><strong>-http-addr</strong>: 表示操作的服务器的HTTP端口地址，这里是 server1，所以是 127.0.0.1:18500  </p>
+<h2 id="（二）consul-dc1-server2"><a href="#（二）consul-dc1-server2" class="headerlink" title="（二）consul\dc1\server2"></a>（二）consul\dc1\server2</h2><h3 id="1-config-basic-json-1"><a href="#1-config-basic-json-1" class="headerlink" title="1) .\config\basic.json"></a>1) .\config\basic.json</h3><figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;datacenter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;dc1&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;node_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;server2&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;bind_addr&quot;</span><span class="punctuation">:</span> <span class="string">&quot;127.0.0.1&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;ports&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;dns&quot;</span><span class="punctuation">:</span> <span class="number">28600</span><span class="punctuation">,</span>        <span class="comment">/*默认：8600*/</span></span><br><span class="line">    <span class="attr">&quot;http&quot;</span><span class="punctuation">:</span> <span class="number">28500</span><span class="punctuation">,</span>       <span class="comment">/*默认：8500*/</span></span><br><span class="line">    <span class="attr">&quot;https&quot;</span><span class="punctuation">:</span> <span class="number">28501</span><span class="punctuation">,</span>      <span class="comment">/*默认：8501，默认是禁用的*/</span></span><br><span class="line">    <span class="attr">&quot;grpc&quot;</span><span class="punctuation">:</span> <span class="number">28502</span><span class="punctuation">,</span>       <span class="comment">/*默认：8502，默认是禁用的*/</span></span><br><span class="line">    <span class="attr">&quot;serf_lan&quot;</span><span class="punctuation">:</span> <span class="number">28301</span><span class="punctuation">,</span>   <span class="comment">/*默认：8301*/</span></span><br><span class="line">    <span class="attr">&quot;serf_wan&quot;</span><span class="punctuation">:</span> <span class="number">28302</span><span class="punctuation">,</span>   <span class="comment">/*默认：8302*/</span></span><br><span class="line">    <span class="attr">&quot;server&quot;</span><span class="punctuation">:</span> <span class="number">28300</span>      <span class="comment">/*默认：8300*/</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;client_addr&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0.0.0.0&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-bootstrap-ps1-1"><a href="#2-bootstrap-ps1-1" class="headerlink" title="2) .\bootstrap.ps1"></a>2) .\bootstrap.ps1</h3><figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">.\consul.exe agent <span class="literal">-server</span> <span class="literal">-bootstrap-expect</span> <span class="number">3</span> <span class="literal">-config-dir</span>=<span class="string">&quot;.\config&quot;</span> <span class="literal">-data-dir</span>=<span class="string">&quot;.\data&quot;</span> <span class="literal">-ui</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>-server</strong>: 表示启动的是 Consul 的服务器<br><strong>-bootstrap-expect 3</strong>: 表示集群最少需要 3 台服务器在运行才算有效<br><strong>-config-dir&#x3D;”.\config”</strong>: 表示配置文件的目录为 “.\config”<br><strong>-data-dir&#x3D;”.\data”</strong>: 表示 Consul 的数据存储在 “.\data” 目录中<br><strong>-ui</strong>: 表示启用 Consul 的 Web UI ，通过浏览器访问 <code>http://&lt;ip&gt;:8500/ui</code> 可以看到 Web 界面</p>
+<h3 id="3-join-ps1-1"><a href="#3-join-ps1-1" class="headerlink" title="3) .\join.ps1"></a>3) <strong>.\join.ps1</strong></h3><figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 命令格式：consul join [options] address ...</span></span><br><span class="line"></span><br><span class="line">.\consul.exe join <span class="literal">-http-addr</span>=<span class="string">&quot;127.0.0.1:28500&quot;</span> <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">18301</span> </span><br></pre></td></tr></table></figure>
+
+<p>命令的意思：server2 加入到 server1 中</p>
+<p><strong>-http-addr</strong> : 表示操作的服务器的HTTP端口地址，这里是 server2，所以是 127.0.0.1:28500<br><strong>address</strong> : 表示当前被操作的服务器，想要加入到其中的服务器的地址，LAN或者WAN，比如 server2 加入到 server1，可以通过 <code>consul members</code> 命令查看 server 的地址，咱们这里是在本机上操作的，所以是 LAN（局域网）<br><strong>…</strong> : 省略号的意思是可以同时加入多个集群</p>
+<h3 id="4-members-ps1-1"><a href="#4-members-ps1-1" class="headerlink" title="4) .\members.ps1"></a>4) .\members.ps1</h3><figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">.\consul.exe members <span class="literal">-http-addr</span>=<span class="string">&quot;127.0.0.1:28500&quot;</span></span><br></pre></td></tr></table></figure>
+<p>命令的意思：查看 server2 所在集群的结点信息，默认只有 server2 自身</p>
+<p><strong>-http-addr</strong>: 表示操作的服务器的HTTP端口地址，这里是 server2，所以是 127.0.0.1:28500  </p>
+<h2 id="（三）consul-dc1-server2"><a href="#（三）consul-dc1-server2" class="headerlink" title="（三）consul\dc1\server2"></a>（三）consul\dc1\server2</h2><h3 id="1-config-basic-json-2"><a href="#1-config-basic-json-2" class="headerlink" title="1) .\config\basic.json"></a>1) .\config\basic.json</h3><figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;datacenter&quot;</span><span class="punctuation">:</span> <span class="string">&quot;dc1&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;node_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;server2&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;bind_addr&quot;</span><span class="punctuation">:</span> <span class="string">&quot;127.0.0.1&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;ports&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;dns&quot;</span><span class="punctuation">:</span> <span class="number">38600</span><span class="punctuation">,</span>        <span class="comment">/*默认：8600*/</span></span><br><span class="line">    <span class="attr">&quot;http&quot;</span><span class="punctuation">:</span> <span class="number">38500</span><span class="punctuation">,</span>       <span class="comment">/*默认：8500*/</span></span><br><span class="line">    <span class="attr">&quot;https&quot;</span><span class="punctuation">:</span> <span class="number">38501</span><span class="punctuation">,</span>      <span class="comment">/*默认：8501，默认是禁用的*/</span></span><br><span class="line">    <span class="attr">&quot;grpc&quot;</span><span class="punctuation">:</span> <span class="number">38502</span><span class="punctuation">,</span>       <span class="comment">/*默认：8502，默认是禁用的*/</span></span><br><span class="line">    <span class="attr">&quot;serf_lan&quot;</span><span class="punctuation">:</span> <span class="number">38301</span><span class="punctuation">,</span>   <span class="comment">/*默认：8301*/</span></span><br><span class="line">    <span class="attr">&quot;serf_wan&quot;</span><span class="punctuation">:</span> <span class="number">38302</span><span class="punctuation">,</span>   <span class="comment">/*默认：8302*/</span></span><br><span class="line">    <span class="attr">&quot;server&quot;</span><span class="punctuation">:</span> <span class="number">38300</span>      <span class="comment">/*默认：8300*/</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;client_addr&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0.0.0.0&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-bootstrap-ps1-2"><a href="#2-bootstrap-ps1-2" class="headerlink" title="2) .\bootstrap.ps1"></a>2) .\bootstrap.ps1</h3><figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">.\consul.exe agent <span class="literal">-server</span> <span class="literal">-bootstrap-expect</span> <span class="number">3</span> <span class="literal">-config-dir</span>=<span class="string">&quot;.\config&quot;</span> <span class="literal">-data-dir</span>=<span class="string">&quot;.\data&quot;</span> <span class="literal">-ui</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>-server</strong>: 表示启动的是 Consul 的服务器<br><strong>-bootstrap-expect 3</strong>: 表示集群最少需要 3 台服务器在运行才算有效<br><strong>-config-dir&#x3D;”.\config”</strong>: 表示配置文件的目录为 “.\config”<br><strong>-data-dir&#x3D;”.\data”</strong>: 表示 Consul 的数据存储在 “.\data” 目录中<br><strong>-ui</strong>: 表示启用 Consul 的 Web UI ，通过浏览器访问 <code>http://&lt;ip&gt;:8500/ui</code> 可以看到 Web 界面</p>
+<h3 id="3-join-ps1-2"><a href="#3-join-ps1-2" class="headerlink" title="3) .\join.ps1"></a>3) <strong>.\join.ps1</strong></h3><figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 命令格式：consul join [options] address ...</span></span><br><span class="line"></span><br><span class="line">.\consul.exe join <span class="literal">-http-addr</span>=<span class="string">&quot;127.0.0.1:38500&quot;</span> <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">18301</span> </span><br></pre></td></tr></table></figure>
+
+<p>命令的意思：server3 加入到 server1 中</p>
+<p><strong>-http-addr</strong> : 表示操作的服务器的HTTP端口地址，这里是 server3，所以是 127.0.0.1:38500<br><strong>address</strong> : 表示当前被操作的服务器，想要加入到其中的服务器的地址，LAN或者WAN，比如 server3 加入到 server1，可以通过 <code>consul members</code> 命令查看 server 的地址，咱们这里是在本机上操作的，所以是 LAN（局域网）<br><strong>…</strong> : 省略号的意思是可以同时加入多个集群</p>
+<h3 id="4-members-ps1-2"><a href="#4-members-ps1-2" class="headerlink" title="4) .\members.ps1"></a>4) .\members.ps1</h3><figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">.\consul.exe members <span class="literal">-http-addr</span>=<span class="string">&quot;127.0.0.1:38500&quot;</span></span><br></pre></td></tr></table></figure>
+<p>命令的意思：查看 server3 所在集群的结点信息，默认只有 server3 自身</p>
+<p><strong>-http-addr</strong>: 表示操作的服务器的HTTP端口地址，这里是 server3，所以是 127.0.0.1:38500  </p>
+<h2 id="实验步骤"><a href="#实验步骤" class="headerlink" title="实验步骤"></a>实验步骤</h2><h3 id="步骤1-分别启动-server1-、server2、server3"><a href="#步骤1-分别启动-server1-、server2、server3" class="headerlink" title="步骤1 - 分别启动 server1 、server2、server3"></a>步骤1 - 分别启动 server1 、server2、server3</h3><p>打开 3 个 PowerShell 终端，每个终端进入 1 个server目录，逐个运行目录中的 bootstrap.ps1 脚本。<br>启动后不要关闭终端。</p>
+<h3 id="步骤2-建立集群"><a href="#步骤2-建立集群" class="headerlink" title="步骤2 - 建立集群"></a>步骤2 - 建立集群</h3><p>打开 2 个新的 PowerShell 终端，分别进入 server2 和 server3 目录，并运行目录中的 join.ps1 脚本。</p>
+<h3 id="步骤3-验证集群"><a href="#步骤3-验证集群" class="headerlink" title="步骤3 - 验证集群"></a>步骤3 - 验证集群</h3><p>打开 1 个新的 PowerShell 终端，在任意一个 server 的目录中，运行 members.ps1 脚本，查看集群结点，如果有3个结点，那么就是建立成功了。</p>
+<p><img src="/blog/images/posts/zh-CN/create-consul-datacenter-locally/Snipaste_1.png"></p>
+]]></content>
+      <tags>
+        <tag>Consul</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Control Plane 控制平面</title>
+    <url>/blog/zh-CN/terminology-control-plane/</url>
+    <content><![CDATA[<blockquote>
+<p>“control plane”: provides the rules and configuration for the data plane.<br>“控制平面”：提供数据平面的规则和配置。</p>
+</blockquote>
+<p>Control Plane 位于 Data Plane 之上。</p>
+]]></content>
+      <tags>
+        <tag>Terminology</tag>
+        <tag>Distributed System</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>变体泛型</title>
+    <url>/blog/zh-CN/dotnet-csharp-variant-generic-interfaces/</url>
+    <content><![CDATA[<p>变体泛型接口（Variant Generic Interfaces）</p>
+<span id="more"></span>
+<h1 id="协变-out"><a href="#协变-out" class="headerlink" title="协变 out"></a>协变 out</h1><p>可以将具有派生程度更大（更具体）的类型的泛型，转为具有派生程度更小（更抽象）的类型的泛型</p>
+<p>举例：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">ICovariant</span>&lt;<span class="keyword">out</span> <span class="title">T</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">	<span class="function">T <span class="title">GetSome</span>()</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">Todo</span>(<span class="params">Action&lt;T&gt; action</span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyCovariant</span>&lt;<span class="title">T</span>&gt; : <span class="title">ICovariant</span>&lt;<span class="title">T</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">GetSome</span>()</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">default</span>&lt;T&gt;;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Todo</span>(<span class="params">Action&lt;T&gt; action</span>)</span></span><br><span class="line">	&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Base</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Child</span> : <span class="title">Base</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">// 子类更具体</span></span><br><span class="line">		ICovariant&lt;Child&gt; childs = <span class="keyword">new</span> MyCovariant&lt;Child&gt;();</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 基类更抽象，从具体到抽象的隐式转换</span></span><br><span class="line">		ICovariant&lt;Base&gt; bases = childs;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="逆变-in"><a href="#逆变-in" class="headerlink" title="逆变 in"></a>逆变 in</h1><p>可以将具有派生程度更小（更抽象）的类型的泛型，转为具有派生程度更大（更具体）的类型的泛型</p>
+<p>举例：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IContravariant</span>&lt;<span class="keyword">in</span> <span class="title">T</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">SetSome</span>(<span class="params">T param</span>)</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">Todo</span>(<span class="params">Func&lt;T&gt; action</span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyContravariant</span>&lt;<span class="title">T</span>&gt; : <span class="title">IContravariant</span>&lt;<span class="title">T</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetSome</span>(<span class="params">T param</span>)</span></span><br><span class="line">	&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Todo</span>(<span class="params">Func&lt;T&gt; action</span>)</span></span><br><span class="line">	&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Base</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Child</span> : <span class="title">Base</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">// 基类更抽象</span></span><br><span class="line">		IContravariant&lt;Base&gt; bases = <span class="keyword">new</span> MyContravariant&lt;Base&gt;();</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 子类更具体，从抽象到具体的隐式转换</span></span><br><span class="line">		IContravariant&lt;Child&gt; childs = bases;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<h4 id="PS"><a href="#PS" class="headerlink" title="PS:"></a>PS:</h4><p>协变和逆变属于可变泛型，常规的泛型属于固定泛型；<br>可变泛型仅可在接口和委托之间转换，无法在其实现类上转换，因为可变泛型接口的实现类为固定泛型。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>AsyncLocal</title>
+    <url>/blog/zh-CN/dotnet-csharp-asynclocal/</url>
+    <content><![CDATA[<p>AsyncLocal</p>
+<span id="more"></span>
+<p>作用于共享的变量，如 static 修饰的变量，</p>
+<p>在切换执行上下文时（async &#x2F; await ），在每个执行上下文中独立变化，</p>
+<p>什么意思呢？</p>
+<p>就是假如共享变量 sharedVar 在 await 的语句中能够访问和修改，那么 await 中对共享变量 sharedVar 所作的修改，仅在 await 的上下文中可见，</p>
+<p>当回到 调用 await 的上下文时（父上下文），共享变量 sharedVar 的值 仍然是 调用 await 之前的值</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> System.Text.Json;</span><br><span class="line"><span class="keyword">using</span> System.Threading;</span><br><span class="line"><span class="keyword">using</span> System.Threading.Tasks;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">ThreadAndAsyncTest</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> AsyncLocal&lt;<span class="built_in">int</span>&gt; _myvar = <span class="keyword">new</span> AsyncLocal&lt;<span class="built_in">int</span>&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            _myvar.Value = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">            Task.Run(() =&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                Console.WriteLine(<span class="string">$&quot;异步方法内，修改之前：<span class="subst">&#123;_myvar.Value&#125;</span>&quot;</span>);</span><br><span class="line">                _myvar.Value = <span class="number">2</span>;</span><br><span class="line">                Console.WriteLine(<span class="string">$&quot;异步方法内，修改之后：<span class="subst">&#123;_myvar.Value&#125;</span>&quot;</span>);</span><br><span class="line">            &#125;).Wait();</span><br><span class="line"></span><br><span class="line">            Console.WriteLine(<span class="string">$&quot;异步之后：<span class="subst">&#123;_myvar.Value&#125;</span>&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/blog/images/posts/zh-CN/dotnet-csharp-asynclocal/Snipaste_1.png"></p>
+]]></content>
+      <categories>
+        <category>.NET</category>
+      </categories>
+      <tags>
+        <tag>Threading</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL 主从复制</title>
+    <url>/blog/zh-CN/configure-mysql-master-slave-replication/</url>
+    <content><![CDATA[<p>MySQL 主从复制</p>
+<span id="more"></span>
+<h2 id="大致步骤"><a href="#大致步骤" class="headerlink" title="大致步骤"></a>大致步骤</h2><p><em>注意：改完配置需要重启mysql</em></p>
+<ul>
+<li><p>主从服务器都需要配置 <code>server_id</code> (<code>/etc/mysql/my.cnf</code>  <code>[mysqld]</code> )</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">&gt; vi /etc/mysql/my.cnf</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">log-bin=mysql-bin</span><br><span class="line">server_id=1  <span class="comment">#局域网唯一</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>主服务器创建用于复制的mysql用户，比如 <code>slave1</code></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">mysql -u&lt;username&gt; -p&lt;password&gt;</span><br><span class="line">mysql&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># mysql8:</span></span><br><span class="line">mysql&gt; create user <span class="string">&#x27;slave1&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified by <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># create user &#x27;&lt;username&gt;&#x27;@&#x27;&lt;hostname&gt;&#x27; identified by &#x27;&lt;password&gt;&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>主服务器将 REPLICATION 权限授予复制数据的用户 <code>slave1</code></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">mysql -u&lt;username&gt; -p&lt;password&gt;</span><br><span class="line">mysql&gt;</span><br><span class="line"></span><br><span class="line">mysql&gt; grant replication slave on *.* to <span class="string">&#x27;slave1&#x27;</span>@<span class="string">&#x27;%&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># grant replication slave on &lt;database&gt;.&lt;table&gt; to &#x27;&lt;username&gt;&#x27;@&#x27;&lt;hostname&gt;&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从服务器设置 master</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">mysql&gt; change master to </span><br><span class="line">master_host=<span class="string">&#x27;&lt;master hostname | ip&gt;&#x27;</span>, </span><br><span class="line">master_port=&lt;master port | 3306&gt;, </span><br><span class="line">master_user=<span class="string">&#x27;&lt;slave user name in master&gt;&#x27;</span>, </span><br><span class="line">master_password=<span class="string">&#x27;&lt;slave user password in master&gt;&#x27;</span>, </span><br><span class="line">master_log_file=<span class="string">&#x27;&lt;binlog filename&gt;&#x27;</span>, </span><br><span class="line">master_log_pos=&lt;binlog position&gt;, </span><br><span class="line">master_connect_retry=30;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><p>从服务器启动 slave</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">mysql&gt; start slave;</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>Database</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>解决 VS2019 在 Docker 调试慢</title>
+    <url>/blog/zh-CN/fix-vs2019-slow-debugging-in-docker/</url>
+    <content><![CDATA[<p>解决 VS2019 在 Docker 调试慢</p>
+<span id="more"></span>
+<h1 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h1><p>在 visual stutio 的输入窗口中，找到 Build 输出项</p>
+<p>从日志中可以发现执行了下面这个 powershell 脚本：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\&lt;USER&gt;\AppData\Local\Temp\GetVsDbg.ps1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ps1"><table><tr><td class="code"><pre><span class="line">C:\Windows\System32\WindowsPowerShell\v1.<span class="number">0</span>\powershell.exe `</span><br><span class="line"><span class="literal">-NonInteractive</span> `</span><br><span class="line"><span class="literal">-NoProfile</span> `</span><br><span class="line"><span class="literal">-WindowStyle</span> <span class="keyword">Hidden</span> `</span><br><span class="line"><span class="literal">-ExecutionPolicy</span> RemoteSigned `</span><br><span class="line"><span class="operator">-File</span> <span class="string">&quot;C:\Users\&lt;USER&gt;\AppData\Local\Temp\GetVsDbg.ps1&quot;</span> `</span><br><span class="line"><span class="literal">-Version</span> vs2017u5 `</span><br><span class="line"><span class="literal">-RuntimeID</span> linux<span class="literal">-musl-x64</span> `</span><br><span class="line"><span class="literal">-InstallPath</span> <span class="string">&quot;C:\Users\&lt;USER&gt;\vsdbg\vs2017u5\linux-musl-x64&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>只需要查看此脚本，即可发现，慢的原因是下载 <code>vsdbg-&lt;Runtime-ID&gt;.zip</code> 比较慢，所以我们可以手动下载此文件，并解压到 <code>$InstallPath</code> 中，  </p>
+<p>最后将 <code>RuntimeID</code> 写入 <code>success_rid.txt</code> 文件中，将 <code>$VersionNumber</code> 写入 <code>success_version.txt</code> 中，</p>
+<p>重新 F5 即可。</p>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><p>如果觉得看了我写的仍然不是很明白，建议直接查看 <code>GetVsDbg.ps1</code> 内容。</p>
+]]></content>
+      <tags>
+        <tag>Docker</tag>
+        <tag>Visual Studio</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>UmiJS 中 @umijs/plugin-access 和 @umijs/plugin-layout 的使用问题</title>
+    <url>/blog/zh-CN/umijs-plugin-access-and-plugin-layout-usage-troubleshooting/</url>
+    <content><![CDATA[<p>UmiJS 中 @umijs&#x2F;plugin-access 和 @umijs&#x2F;plugin-layout 的使用问题</p>
+<span id="more"></span>
+<p>示例代码：</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="comment">// src/access.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">function</span> <span class="title function_">access</span>(<span class="params">initialState: &#123; currentUser?: API.CurrentUser | <span class="literal">undefined</span> &#125;</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; currentUser &#125; = initialState || &#123;&#125;;</span><br><span class="line">  <span class="keyword">const</span> isLogin = !!currentUser;</span><br><span class="line">  <span class="comment">// const isLogin = !!currentUser || undefined;</span></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    isLogin,</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="注意（有坑）："><a href="#注意（有坑）：" class="headerlink" title="注意（有坑）："></a>注意（有坑）：</h1><p><code>@umijs/plugin-access</code> 插件通过 <code>patchRoutes</code> 处理了 <code>props.routes</code> （完整的路由），<br><code>@umijs/plugin-layout</code> 插件判断权限时，读取的是 <code>props.route.routes</code> （当前路由），<br>而此时 <code>props.routes</code> 与 <code>props.route.routes</code> 的 <code>unaccessible</code> 值并不一致（后者为旧值）。</p>
+<p><img src="/blog/images/posts/zh-CN/umijs-plugin-access-and-plugin-layout-usage-troubleshooting/Snipaste_1.png"></p>
+<p><img src="/blog/images/posts/zh-CN/umijs-plugin-access-and-plugin-layout-usage-troubleshooting/Snipaste_2.png"></p>
+<h1 id="影响："><a href="#影响：" class="headerlink" title="影响："></a>影响：</h1><p>通常首次访问时，<code>currentUser</code> 是 <code>undefined</code>，则 <code>isLogin = false</code>，因为上述问题，<br>直接导致在登录页 <code>setInitialState</code> 之后，<code>currentUser</code> 已经有值，<code>isLogin = true</code> 的情况下，<br><code>@umijs/plugin-layout</code> 插件读取到的路由数据是旧数据，<br>即 <code>props.route.routes</code> 中的 <code>unaccessible = true</code>，<br>而 <code>props.routes</code> 中的 <code>unaccessible = false</code> （因为权限已经有了）</p>
+<h1 id="临时解决方案："><a href="#临时解决方案：" class="headerlink" title="临时解决方案："></a>临时解决方案：</h1><p>经测试发现，如果首次加载的时候，将权限的值设为 <code>undefined</code> 而不是 <code>false</code>，<br>那么 <code>setInitialState</code> 之后，<code>props.route.routes</code> 中的 <code>unaccessible = false</code>，而不是 <code>true</code>。</p>
+]]></content>
+      <tags>
+        <tag>React</tag>
+        <tag>Troubleshooting</tag>
+        <tag>UmiJS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>frp 搭建</title>
+    <url>/blog/zh-CN/frp-setup-guide/</url>
+    <content><![CDATA[<p>frp 搭建</p>
+<span id="more"></span>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p><a href="https://gofrp.org/zh-cn/docs/setup/" title="Frp官方文档">Frp官方文档</a> 已经说的很清楚了，这里只讲如何安装为服务。</p>
+<h1 id="在-CentOS-中安装-frps-服务"><a href="#在-CentOS-中安装-frps-服务" class="headerlink" title="在 CentOS 中安装 frps 服务"></a>在 CentOS 中安装 frps 服务</h1><ol>
+<li>下载 <code>frp_0.34.0_linux_amd64.tar.gz</code> 包</li>
+<li><code>tar -xzvf frp_0.34.0_linux_amd64.tar.gz</code> 解压</li>
+<li>复制服务脚本 <code>frp_0.34.0_linux_amd64\systemd\frps.service</code> 到 <code>/usr/lib/systemd/system/frps.service</code></li>
+<li>修改配置文件 <code>frp_0.34.0_linux_amd64/frps.ini</code> （<a href="https://gofrp.org/zh-cn/docs/reference/server-configures/" title="服务端配置文档">服务端配置文档</a>）</li>
+<li>复制配置文件 <code>frp_0.34.0_linux_amd64/frps.ini</code> 到 <code>/etc/frp/frps.ini</code> （在 <code>frps.service</code> 服务脚本中设置的配置文件路径）</li>
+<li>复制可执行文件 <code>frp_0.34.0_linux_amd64/frps</code> 到 <code>/usr/bin/frps</code>（在 <code>frps.service</code> 服务脚本中设置的可执行文件路径）</li>
+<li>设为开机启动 <code>systemctl enable frps.service</code> （下次开机生效）</li>
+<li>立刻启动 <code>systemctl start frps.service</code></li>
+<li>查看服务状态 <code>systemctl status frps.service</code></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>Misc</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Unable to create an object of type &#39;DbContext&#39;. For the different patterns supported at design time</title>
+    <url>/blog/zh-CN/unable-to-create-dbcontext-object-design-time-patterns/</url>
+    <content><![CDATA[<p>Unable to create an object of type ‘DbContext’. For the different patterns supported at design time</p>
+<span id="more"></span>
+<blockquote>
+<p>Unable to create an object of type ‘DbContext’. For the different patterns supported at design time</p>
+</blockquote>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p><img src="/blog/images/posts/zh-CN/unable-to-create-dbcontext-object-design-time-patterns/Snipaste_1.png"></p>
+]]></content>
+      <tags>
+        <tag>Troubleshooting</tag>
+        <tag>Entity Framework Core</tag>
       </tags>
   </entry>
 </search>
