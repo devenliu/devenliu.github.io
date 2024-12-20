@@ -1,3 +1,4 @@
+https://devenliu.com/blog/translations/index.html
 https://devenliu.com/blog/zh-CN/frp-setup-guide/
 https://devenliu.com/blog/zh-CN/unable-to-create-dbcontext-object-design-time-patterns/
 https://devenliu.com/blog/zh-CN/umijs-plugin-access-and-plugin-layout-usage-troubleshooting/
